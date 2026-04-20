@@ -1,0 +1,200 @@
+/* ─── Custom Fonts ─────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+
+@font-face {
+  font-family: 'Amalfi Coast';
+  src: url('/fonts/AmalfiCoast.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ─── CSS Variables ────────────────────────────────────────────── */
+:root {
+  --background: #0D1117;
+  --foreground: #E6EDF3;
+
+  /* Theme Palette */
+  --bg-deep: #0D1117;
+  --bg-surface: #161B22;
+  --bg-elevated: #1C2333;
+  
+  --accent-teal: #00BFA6;
+  --accent-teal-dark: #009688;
+  --accent-blue: #58A6FF;
+  
+  --text-primary: #E6EDF3;
+  --text-secondary: #8B949E;
+  --text-muted: #6E7681;
+  
+  --border: rgba(48, 54, 61, 0.8);
+  --border-glass: rgba(0, 191, 166, 0.2);
+
+  /* Typography */
+  --font-body: 'Inter', sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+  --font-brand: 'Amalfi Coast', cursive;
+  --font-code: 'Fira Code', monospace;
+
+  /* Transitions */
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Base ─────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--bg-deep);
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+code, pre {
+  font-family: var(--font-code);
+}
+
+/* ─── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-elevated);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ─── Selection ────────────────────────────────────────────────── */
+::selection {
+  background: rgba(0, 191, 166, 0.3);
+  color: var(--text-primary);
+}
+
+/* ─── Animations ───────────────────────────────────────────────── */
+@keyframes particle-float {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-10px) translateX(5px); }
+  50% { transform: translateY(-5px) translateX(-5px); }
+  75% { transform: translateY(5px) translateX(10px); }
+}
+
+@keyframes border-glow {
+  0%, 100% { border-color: rgba(0, 191, 166, 0.2); box-shadow: 0 0 10px rgba(0, 191, 166, 0.1); }
+  50% { border-color: rgba(0, 191, 166, 0.5); box-shadow: 0 0 20px rgba(0, 191, 166, 0.3); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-particle {
+  animation: particle-float 10s ease-in-out infinite;
+}
+
+.animate-border-glow {
+  animation: border-glow 3s ease-in-out infinite;
+}
+
+/* ─── Utilities ────────────────────────────────────────────────── */
+.teal-gradient-text {
+  background: linear-gradient(135deg, #00BFA6, #58A6FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass-dark {
+  background: rgba(22, 27, 34, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+}
+
+.tech-border {
+  position: relative;
+}
+.tech-border::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-teal), transparent);
+  opacity: 0.5;
+}
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--text-secondary) 0%,
+    var(--text-primary) 25%,
+    var(--accent-teal) 50%,
+    var(--text-primary) 75%,
+    var(--text-secondary) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+@theme {
+  --animate-marquee: marquee 60s linear infinite;
+  
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+}
+
+/* Components */
+.btn-primary {
+  background: var(--accent-teal);
+  color: var(--bg-deep);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  transition: var(--transition-smooth);
+}
+.btn-primary:hover {
+  background: var(--accent-teal-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 191, 166, 0.4);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  transition: var(--transition-smooth);
+}
+.btn-secondary:hover {
+  border-color: var(--accent-teal);
+  color: var(--accent-teal);
+  background: rgba(0, 191, 166, 0.05);
+}
