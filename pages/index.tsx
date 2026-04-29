@@ -97,6 +97,7 @@ export default function Home() {
                     src="/drepl.jpg"
                     alt="Dr EPL"
                     fill
+                    sizes="(max-width: 640px) 256px, (max-width: 1280px) 320px, 384px"
                     priority
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />

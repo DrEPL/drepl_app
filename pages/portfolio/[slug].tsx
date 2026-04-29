@@ -171,6 +171,7 @@ export default function ProjectDetail() {
                          src={screenshot.url} 
                          alt={screenshot.title}
                          fill
+                         sizes="(max-width: 1024px) 100vw, 33vw"
                          className="object-cover transition-transform duration-500 group-hover:scale-105"
                        />
                      </div>
@@ -214,6 +215,7 @@ export default function ProjectDetail() {
               src={selectedImage} 
               alt="Vue agrandie"
               fill
+              sizes="100vw"
               className="object-contain"
             />
           </div>
