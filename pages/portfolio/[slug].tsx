@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { projects } from '@/data/projects';
-import { ArrowLeft, ArrowUpRight, CheckCircle, Code2, Cpu, Github, LayoutGrid, Lightbulb } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, CheckCircle, Code2, Cpu, Github, LayoutGrid, Lightbulb, Lock, X } from 'lucide-react';
 
 export default function ProjectDetail() {
   const router = useRouter();
   const { slug } = router.query;
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   // Wait for router to be ready
   if (!router.isReady) return null;
@@ -43,9 +45,16 @@ export default function ProjectDetail() {
           
           <div className="relative z-10 flex flex-col lg:flex-row gap-12">
             <div className="flex-1">
-              <span className="inline-block text-xs font-code text-[var(--accent-teal)] px-3 py-1 bg-[var(--accent-teal)]/10 rounded-md mb-4 border border-[var(--accent-teal)]/20">
-                {project.category}
-              </span>
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <span className="inline-block text-xs font-code text-[var(--accent-teal)] px-3 py-1 bg-[var(--accent-teal)]/10 rounded-md border border-[var(--accent-teal)]/20">
+                  {project.category}
+                </span>
+                {project.developedAt && (
+                  <span className="inline-block text-xs font-medium text-[var(--accent-blue)] px-3 py-1 bg-[var(--accent-blue)]/10 rounded-md border border-[var(--accent-blue)]/20">
+                    Projet développé au {project.developedAt}
+                  </span>
+                )}
+              </div>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold mb-6 leading-tight">
                 {project.title}
               </h1>
@@ -59,6 +68,11 @@ export default function ProjectDetail() {
                     <Github size={18} /> Code Source
                   </a>
                 )}
+                {project.isPrivateRepo && (
+                  <div className="btn-secondary text-sm flex items-center gap-2 opacity-80 cursor-default" title="Code disponible sur demande">
+                    <Lock size={18} /> Repository privé
+                  </div>
+                )}
                 {project.demoUrl && (
                   <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="btn-primary text-sm flex items-center gap-2">
                     <ArrowUpRight size={18} /> Demo Live
@@ -70,15 +84,33 @@ export default function ProjectDetail() {
             {/* Tech Stack Box */}
             <div className="lg:w-1/3 bg-[var(--bg-deep)] rounded-2xl p-6 border border-[var(--border)] self-start">
               <h3 className="font-heading font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                <Code2 size={20} className="text-[var(--accent-teal)]" /> Technologies
+                <Code2 size={20} className="text-[var(--accent-teal)]" /> Stack Technique
               </h3>
-              <div className="flex flex-wrap gap-2">
-                {project.technologies.map(tech => (
-                  <span key={tech} className="text-sm text-[var(--text-secondary)] px-3 py-1.5 border border-[var(--border)] rounded-lg bg-[var(--bg-surface)]">
-                    {tech}
-                  </span>
-                ))}
-              </div>
+              
+              {project.categorizedTechnologies ? (
+                <div className="space-y-4">
+                  {project.categorizedTechnologies.map((cat, idx) => (
+                    <div key={idx}>
+                      <h4 className="text-xs uppercase tracking-wider text-[var(--text-muted)] font-semibold mb-2">{cat.category}</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {cat.skills.map(tech => (
+                          <span key={tech} className="text-sm text-[var(--text-secondary)] px-2.5 py-1 border border-[var(--border)] rounded-md bg-[var(--bg-surface)]">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map(tech => (
+                    <span key={tech} className="text-sm text-[var(--text-secondary)] px-3 py-1.5 border border-[var(--border)] rounded-lg bg-[var(--bg-surface)]">
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -124,19 +156,69 @@ export default function ProjectDetail() {
             </section>
           </div>
 
-          {/* Sidebar */}
+          {/* Sidebar Visuals */}
           <div className="lg:col-span-1 space-y-8">
-             {/* Visuals Placeholder */}
-             <div className="glass-dark border border-[var(--border)] rounded-2xl p-6 text-center">
-                <LayoutGrid className="mx-auto text-[var(--text-muted)] mb-4" size={48} />
-                <h4 className="font-heading font-semibold mb-2">Architecture Visuelle</h4>
-                <p className="text-sm text-[var(--text-muted)]">Les schémas d'architecture et les captures d'écran du projet seront bientôt ajoutés.</p>
-             </div>
+             {project.screenshots && project.screenshots.length > 0 ? (
+               <div className="flex flex-col gap-6">
+                 {project.screenshots.map((screenshot, index) => (
+                   <div 
+                     key={index} 
+                     className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-deep)] transition-all hover:border-[var(--accent-teal)]/50 hover:shadow-lg hover:shadow-[var(--accent-teal)]/10"
+                     onClick={() => setSelectedImage(screenshot.url)}
+                   >
+                     <div className="relative aspect-video w-full overflow-hidden">
+                       <Image 
+                         src={screenshot.url} 
+                         alt={screenshot.title}
+                         fill
+                         className="object-cover transition-transform duration-500 group-hover:scale-105"
+                       />
+                     </div>
+                     <div className="p-4 border-t border-[var(--border)]">
+                       <h4 className="font-heading font-semibold text-sm mb-1 text-[var(--text-primary)]">{screenshot.title}</h4>
+                       <p className="text-xs text-[var(--text-muted)] leading-relaxed">{screenshot.description}</p>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             ) : (
+               <div className="glass-dark border border-[var(--border)] rounded-2xl p-6 text-center">
+                  <LayoutGrid className="mx-auto text-[var(--text-muted)] mb-4" size={48} />
+                  <h4 className="font-heading font-semibold mb-2">Architecture Visuelle</h4>
+                  <p className="text-sm text-[var(--text-muted)]">Les schémas d'architecture et les captures d'écran du projet seront bientôt ajoutés.</p>
+               </div>
+             )}
           </div>
 
         </div>
 
       </div>
+
+      {/* Lightbox */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button 
+            className="absolute top-6 right-6 text-white hover:text-[var(--accent-teal)] transition-colors p-2 rounded-full bg-white/10 hover:bg-white/20"
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedImage(null);
+            }}
+          >
+            <X size={24} />
+          </button>
+          <div className="relative w-full max-w-5xl aspect-video rounded-xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+            <Image 
+              src={selectedImage} 
+              alt="Vue agrandie"
+              fill
+              className="object-contain"
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

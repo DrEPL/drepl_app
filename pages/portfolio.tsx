@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { projects } from '@/data/projects';
 import { ArrowRight, BrainCircuit, Code, Database, Filter } from 'lucide-react';
@@ -66,12 +67,24 @@ export default function Portfolio() {
                 transition={{ duration: 0.3 }}
                 className="group glass-dark rounded-2xl overflow-hidden border border-[var(--border)] hover:border-[var(--accent-teal)] transition-all flex flex-col h-full"
               >
-                {/* Image Placeholder / Icon Area */}
-                <div className="relative h-56 w-full bg-[var(--bg-elevated)] flex items-center justify-center p-6 border-b border-[var(--border)] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent-teal)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
-                  {project.category === 'IA' ? <BrainCircuit size={72} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" /> : 
-                   project.category === 'Big Data' ? <Database size={72} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" /> :
-                   <Code size={72} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" />}
+                {/* Image / Icon Area */}
+                <div className="relative h-56 w-full bg-[var(--bg-elevated)] flex items-center justify-center border-b border-[var(--border)] overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent-teal)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
+                  
+                  {project.imageUrl && project.imageUrl !== '/file.svg' ? (
+                    <Image 
+                      src={project.imageUrl}
+                      alt={project.title}
+                      fill
+                      className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500 z-0"
+                    />
+                  ) : (
+                    <div className="p-6 flex items-center justify-center">
+                      {project.category === 'IA' ? <BrainCircuit size={72} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" /> : 
+                       project.category === 'Big Data' ? <Database size={72} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" /> :
+                       <Code size={72} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" />}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="p-6 flex flex-col flex-grow">
