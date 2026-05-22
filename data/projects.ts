@@ -9,13 +9,13 @@ export interface Project {
   category: 'IA' | 'Big Data' | 'Web/Mobile' | 'IoT';
   technologies: string[];
   imageUrl: string;
-  logoUrl?: string;
-  githubUrl?: string;
-  demoUrl?: string;
-  developedAt?: string;
-  screenshots?: { url: string; title: string; description: string }[];
-  categorizedTechnologies?: { category: string; skills: string[] }[];
-  isPrivateRepo?: boolean;
+  logoUrl?: string | null;
+  githubUrl?: string | null;
+  demoUrl?: string | null;
+  developedAt?: string | null;
+  screenshots?: { url: string; title: string; description: string }[] | null;
+  categorizedTechnologies?: { category: string; skills: string[] }[] | null;
+  isPrivateRepo?: boolean | null;
 }
 
 export const projects: Project[] = [
