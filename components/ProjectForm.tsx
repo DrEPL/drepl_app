@@ -17,6 +17,7 @@ const emptyForm: ProjectFormData = {
   category: 'IA', technologies: [], categorized_technologies: [],
   image_url: '/file.svg', logo_url: null, github_url: null, demo_url: null,
   developed_at: null, screenshots: [], is_private_repo: false, display_order: 0,
+  title_en: null, short_description_en: null, problem_en: null, solution_en: null, results_en: null,
 };
 
 // ── Upload helper ─────────────────────────────────────────────

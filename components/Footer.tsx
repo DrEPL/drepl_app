@@ -1,9 +1,19 @@
 import React from 'react';
 import Link from 'next/link';
 import { Github, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import { useT } from '@/lib/useTranslation';
 
 export default function Footer() {
+  const t = useT();
   const currentYear = new Date().getFullYear();
+
+  const navLinks = [
+    { label: t.nav.home, path: '/' },
+    { label: t.nav.about, path: '/about' },
+    { label: t.nav.services, path: '/services' },
+    { label: t.nav.projects, path: '/projets' },
+    { label: t.nav.contact, path: '/contact' },
+  ];
 
   return (
     <footer className="relative bg-[var(--bg-elevated)]/30 mt-20 overflow-hidden">
@@ -17,7 +27,7 @@ export default function Footer() {
 
       <div className="container mx-auto px-6 lg:px-12 py-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8">
-          
+
           {/* Brand & Bio */}
           <div className="md:col-span-5 space-y-6">
             <Link href="/" className="inline-block group">
@@ -26,7 +36,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-[var(--text-secondary)] text-sm max-w-sm leading-relaxed">
-              Ingénieur IA & Big Data passionné par le développement de solutions intelligentes et innovantes, adaptées aux réalités africaines. Transformons vos idées en réalité.
+              Ingénieur IA &amp; Big Data passionné par le développement de solutions intelligentes et innovantes, adaptées aux réalités africaines. Transformons vos idées en réalité.
             </p>
             <div className="flex items-center gap-4 pt-4">
               <a href="https://github.com/DrEPL" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-xl text-[var(--text-secondary)] hover:text-white hover:bg-[var(--accent-teal)] transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(45,212,191,0.4)] border border-[var(--border)] hover:border-transparent group">
@@ -43,15 +53,9 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div className="md:col-span-3">
-            <h3 className="font-heading font-semibold text-lg mb-6 text-[var(--text-primary)] border-b border-[var(--border)] pb-2 inline-block">Navigation</h3>
+            <h3 className="font-heading font-semibold text-lg mb-6 text-[var(--text-primary)] border-b border-[var(--border)] pb-2 inline-block">{t.footer.nav_title}</h3>
             <ul className="space-y-3">
-              {[
-                { label: 'Accueil', path: '/' },
-                { label: 'À Propos', path: '/about' },
-                { label: 'Services', path: '/services' },
-                { label: 'Projets', path: '/projets' },
-                { label: 'Contact', path: '/contact' }
-              ].map((link) => (
+              {navLinks.map((link) => (
                 <li key={link.path}>
                   <Link href={link.path} className="text-[var(--text-secondary)] hover:text-[var(--accent-teal)] transition-colors text-sm flex items-center gap-2 group">
                     <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-teal)] opacity-0 group-hover:opacity-100 transition-opacity"></span>
@@ -64,7 +68,7 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div className="md:col-span-4">
-            <h3 className="font-heading font-semibold text-lg mb-6 text-[var(--text-primary)] border-b border-[var(--border)] pb-2 inline-block">Me Contacter</h3>
+            <h3 className="font-heading font-semibold text-lg mb-6 text-[var(--text-primary)] border-b border-[var(--border)] pb-2 inline-block">{t.footer.contact_title}</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-[var(--accent-teal)]/30 hover:bg-white/10 transition-colors group">
                 <Mail className="w-5 h-5 text-[var(--accent-teal)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
@@ -86,7 +90,7 @@ export default function Footer() {
               <li className="flex items-start gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-[var(--accent-teal)]/30 hover:bg-white/10 transition-colors group">
                 <MapPin className="w-5 h-5 text-[var(--accent-teal)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                 <span className="text-sm text-[var(--text-secondary)] group-hover:text-white transition-colors">
-                  Dakar, Sénégal<br/>(Disponible en remote)
+                  Dakar, Sénégal<br />(Disponible en remote)
                 </span>
               </li>
             </ul>
@@ -96,11 +100,11 @@ export default function Footer() {
 
         <div className="border-t border-[var(--border)] mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 relative">
           <p className="text-[var(--text-muted)] text-sm">
-            &copy; {currentYear} Dr EPL. Tous droits réservés.
+            &copy; {currentYear} Dr EPL. {t.footer.rights}
           </p>
           <div className="flex items-center gap-2 text-[var(--text-muted)] text-xs">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            Disponible pour de nouvelles missions
+            {t.footer.available}
           </div>
         </div>
       </div>

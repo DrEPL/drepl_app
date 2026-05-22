@@ -7,50 +7,52 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, BrainCircuit, Code, Database, Filter } from 'lucide-react';
 import { supabase, rowToProject } from '@/lib/supabase';
 import type { Project } from '@/data/projects';
-
-const categories = ['Tous', 'IA', 'Big Data', 'Web/Mobile', 'IoT'];
+import { useT } from '@/lib/useTranslation';
 
 interface Props { projects: Project[] }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
   const { data } = await supabase
     .from('projects')
     .select('*')
     .order('display_order', { ascending: true });
 
   return {
-    props: { projects: (data || []).map(rowToProject) },
+    props: { projects: (data || []).map(p => rowToProject(p, locale)) },
     revalidate: 60,
   };
 };
 
 export default function Portfolio({ projects }: Props) {
-  const [activeCategory, setActiveCategory] = useState('Tous');
+  const t = useT();
+  const [activeCategory, setActiveCategory] = useState(t.projects.filter_all);
 
-  const filteredProjects = activeCategory === 'Tous'
+  const categories = [t.projects.filter_all, 'IA', 'Big Data', 'Web/Mobile', 'IoT'];
+
+  const filteredProjects = activeCategory === t.projects.filter_all
     ? projects
     : projects.filter(p => p.category === activeCategory);
 
   return (
     <>
       <Head>
-        <title>Projets | Dr EPL</title>
+        <title>{t.projects.page_title}</title>
         <meta name="description" content="Découvrez mes projets en Intelligence Artificielle, Big Data et développement d'applications." />
       </Head>
 
       <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-20">
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-heading font-extrabold mb-4">Mes <span className="teal-gradient-text">Projets</span></h1>
+          <h1 className="text-4xl md:text-5xl font-heading font-extrabold mb-4">{t.projects.title} <span className="teal-gradient-text">{t.projects.title_highlight}</span></h1>
           <div className="w-20 h-1 bg-[var(--accent-teal)] rounded-full mb-6"></div>
           <p className="text-[var(--text-secondary)] text-lg max-w-2xl">
-            Exploration de cas d&apos;usage réels : de la modélisation de données complexes au déploiement d&apos;API intelligentes.
+            {t.projects.subtitle}
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3 mb-12">
           <div className="flex items-center gap-2 text-[var(--text-muted)] mr-2">
             <Filter size={18} />
-            <span className="text-sm font-medium">Filtrer :</span>
+            <span className="text-sm font-medium">{t.projects.filter_label}</span>
           </div>
           {categories.map(category => (
             <button
@@ -118,7 +120,7 @@ export default function Portfolio({ projects }: Props) {
                     )}
                   </div>
                   <Link href={`/projets/${project.slug}`} className="text-sm font-medium flex items-center justify-between w-full pt-4 border-t border-[var(--border)] group/link">
-                    <span className="text-[var(--text-primary)] group-hover/link:text-[var(--accent-teal)] transition-colors">Découvrir le projet</span>
+                    <span className="text-[var(--text-primary)] group-hover/link:text-[var(--accent-teal)] transition-colors">{t.projects.discover}</span>
                     <ArrowRight size={16} className="text-[var(--accent-teal)] group-hover/link:translate-x-1 transition-transform" />
                   </Link>
                 </div>
@@ -129,7 +131,7 @@ export default function Portfolio({ projects }: Props) {
 
         {filteredProjects.length === 0 && (
           <div className="text-center py-20 text-[var(--text-muted)]">
-            <p>Aucun projet trouvé pour cette catégorie.</p>
+            <p>{t.projects.empty}</p>
           </div>
         )}
       </div>
