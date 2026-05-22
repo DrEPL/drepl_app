@@ -3,11 +3,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { TypeAnimation } from 'react-type-animation';
 import { motion } from 'framer-motion';
-import { ArrowRight, BrainCircuit, Code, Database, Server } from 'lucide-react';
+import { ArrowRight, BrainCircuit, Code, Database } from 'lucide-react';
 import ParticleCanvas from '@/components/ParticleCanvas';
 import { projects } from '@/data/projects';
 import { services } from '@/data/services';
-import { allSkillsList } from '@/data/skills';
 
 const techLogos = [
   { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },

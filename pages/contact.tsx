@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, MapPin, Send, Phone } from 'lucide-react';
 
 export default function Contact() {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '', website: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -24,7 +24,7 @@ export default function Contact() {
       
       if (res.ok) {
         setStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
+        setFormData({ name: '', email: '', subject: '', message: '', website: '' });
       } else {
         setStatus('error');
       }
@@ -127,6 +127,19 @@ export default function Contact() {
               <h2 className="font-heading text-2xl font-bold mb-8">Envoyez-moi un message</h2>
               
               <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Honeypot anti-bot — caché aux utilisateurs */}
+                <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}>
+                  <label htmlFor="website">Ne pas remplir</label>
+                  <input
+                    type="text"
+                    id="website"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={formData.website}
+                    onChange={handleChange}
+                  />
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label htmlFor="name" className="text-sm font-medium text-[var(--text-secondary)]">Nom complet</label>

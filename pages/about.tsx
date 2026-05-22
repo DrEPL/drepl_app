@@ -1,9 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { skillCategories } from '@/data/skills';
-import { Award, BookOpen, Briefcase, ChevronRight, Code, Globe2, Target } from 'lucide-react';
+import { Award, BookOpen, Briefcase, Code, Globe2, Target } from 'lucide-react';
 
 export default function About() {
   return (
@@ -18,17 +17,17 @@ export default function About() {
         {/* Page Header */}
         <div className="mb-16">
           <h1 className="text-4xl md:text-5xl font-heading font-extrabold mb-4">À Propos de <span className="teal-gradient-text">Moi</span></h1>
-          <div className="w-20 h-1 bg-[var(--accent-teal)] rounded-full"></div>
+          <div className="w-20 h-1 bg-(--accent-teal) rounded-full"></div>
         </div>
 
         {/* Presentation */}
         <section className="mb-16">
-          <div className="glass-dark p-8 md:p-10 rounded-3xl border border-[var(--border)]">
-            <h2 className="text-2xl md:text-3xl font-heading font-bold mb-2 text-[var(--text-primary)]">
+          <div className="glass-dark p-8 md:p-10 rounded-3xl border border-(--border)">
+            <h2 className="text-2xl md:text-3xl font-heading font-bold mb-2 text-(--text-primary)">
               Je suis <span className="teal-gradient-text">Dolnick Prudhome ENZANZA</span>
             </h2>
-            <h3 className="text-sm font-code font-semibold text-[var(--text-muted)] mb-6 uppercase tracking-wider">Ingénieur en IA et Big Data</h3>
-            <p className="text-[var(--text-secondary)] text-lg leading-relaxed">
+            <h3 className="text-sm font-code font-semibold text-(--text-muted) mb-6 uppercase tracking-wider">Ingénieur en IA et Big Data</h3>
+            <p className="text-(--text-secondary) text-lg leading-relaxed">
               J'ai un fort intérêt pour l'IA, la donnée, l'IoT et les systèmes intelligents. Passionné par la recherche et les technologies émergentes, mon objectif est de concevoir des solutions fondées sur les valeurs et les réalités africaines.
             </p>
           </div>
@@ -44,26 +43,26 @@ export default function About() {
               className="space-y-6"
             >
               <h2 className="text-2xl md:text-3xl font-heading font-bold flex items-center gap-3">
-                <Globe2 className="text-[var(--accent-teal)]" size={28} />
+                <Globe2 className="text-(--accent-teal)" size={28} />
                 Ma Philosophie
               </h2>
-              <p className="text-[var(--text-secondary)] text-lg leading-relaxed">
+              <p className="text-(--text-secondary) text-lg leading-relaxed">
                 Mon engagement est de développer des solutions d'Intelligence Artificielle et de Big Data qui ne sont pas seulement techniquement avancées, mais aussi <strong className="text-[var(--text-primary)] font-medium">culturellement pertinentes et économiquement viables</strong> pour les marchés émergents, avec un focus particulier sur l'Afrique.
               </p>
-              <p className="text-[var(--text-secondary)] text-lg leading-relaxed">
+              <p className="text-(--text-secondary) text-lg leading-relaxed">
                 Je crois fermement que la technologie doit s'adapter aux réalités locales pour créer un véritable impact. C'est pourquoi j'aborde chaque projet avec une vision holistique : comprendre le contexte, maîtriser la donnée, et déployer des modèles robustes et explicables.
               </p>
               
               <div className="grid grid-cols-2 gap-4 pt-4">
-                <div className="glass-dark p-4 rounded-xl border border-[var(--border)]">
-                  <Target className="text-[var(--accent-teal)] mb-2" size={24} />
+                <div className="glass-dark p-4 rounded-xl border border-(--border)">
+                  <Target className="text-(--accent-teal) mb-2" size={24} />
                   <h4 className="font-heading font-semibold mb-1">Impact Centré</h4>
-                  <p className="text-sm text-[var(--text-secondary)]">Solutions orientées vers des résultats concrets.</p>
+                  <p className="text-sm text-(--text-secondary)">Solutions orientées vers des résultats concrets.</p>
                 </div>
-                <div className="glass-dark p-4 rounded-xl border border-[var(--border)]">
-                  <Award className="text-[var(--accent-teal)] mb-2" size={24} />
+                <div className="glass-dark p-4 rounded-xl border border-(--border)">
+                  <Award className="text-(--accent-teal) mb-2" size={24} />
                   <h4 className="font-heading font-semibold mb-1">Excellence</h4>
-                  <p className="text-sm text-[var(--text-secondary)]">Qualité du code et architecture robuste.</p>
+                  <p className="text-sm text-(--text-secondary)">Qualité du code et architecture robuste.</p>
                 </div>
               </div>
             </motion.div>
@@ -72,7 +71,7 @@ export default function About() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative rounded-3xl overflow-hidden border border-[var(--border)] glass-dark h-[400px] flex items-center justify-center p-8"
+              className="relative rounded-3xl overflow-hidden border border-(--border) glass-dark h-100 flex items-center justify-center p-8"
             >
               <div className="absolute inset-0 bg-gradient-to-tr from-[var(--bg-deep)] to-[var(--bg-elevated)] opacity-50"></div>
               {/* Abstract Representation */}
@@ -90,7 +89,7 @@ export default function About() {
         {/* Journey Timeline */}
         <section className="mb-24">
           <h2 className="text-2xl md:text-3xl font-heading font-bold mb-10 flex items-center gap-3">
-            <Briefcase className="text-[var(--accent-teal)]" size={28} />
+            <Briefcase className="text-(--accent-teal)" size={28} />
             Mon Parcours
           </h2>
 
@@ -99,7 +98,7 @@ export default function About() {
             {/* Master */}
             <div className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
               <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[var(--bg-deep)] bg-[var(--accent-teal)] shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                 <BookOpen size={16} className="text-[var(--bg-deep)]" />
+                 <BookOpen size={16} className="text-(--bg-deep)" />
               </div>
               <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] glass-dark p-6 rounded-2xl border border-[var(--border)] hover:border-[var(--accent-teal)]/50 transition-colors">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2 gap-2">

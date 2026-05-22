@@ -2,28 +2,32 @@ import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
-import { projects } from '@/data/projects';
+import type { GetStaticPaths, GetStaticProps } from 'next';
+import { projects, type Project } from '@/data/projects';
 import { ArrowLeft, ArrowUpRight, CheckCircle, Code2, Cpu, Github, LayoutGrid, Lightbulb, Lock, X } from 'lucide-react';
 
-export default function ProjectDetail() {
-  const router = useRouter();
-  const { slug } = router.query;
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+interface ProjectDetailProps {
+  project: Project;
+}
 
-  // Wait for router to be ready
-  if (!router.isReady) return null;
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: projects.map((p) => ({ params: { slug: p.slug } })),
+    fallback: false,
+  };
+};
 
-  const project = projects.find(p => p.slug === slug);
-
+export const getStaticProps: GetStaticProps<ProjectDetailProps> = async ({ params }) => {
+  const slug = params?.slug as string;
+  const project = projects.find((p) => p.slug === slug);
   if (!project) {
-    return (
-      <div className="container mx-auto px-6 py-32 text-center">
-        <h1 className="text-4xl font-bold mb-4">Projet introuvable</h1>
-        <Link href="/portfolio" className="text-[var(--accent-teal)] hover:underline">Retour au portfolio</Link>
-      </div>
-    );
+    return { notFound: true };
   }
+  return { props: { project } };
+};
+
+export default function ProjectDetail({ project }: ProjectDetailProps) {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   return (
     <>
