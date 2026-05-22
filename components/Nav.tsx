@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { Menu, X, Globe } from 'lucide-react';
 import { useT } from '@/lib/useTranslation';
+import Flag from './Flag';
 
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -72,15 +73,15 @@ export default function Nav() {
               <Globe size={14} className="text-[var(--text-muted)] ml-1" />
               <button
                 onClick={() => switchLocale('fr')}
-                className={`px-2 py-1 rounded text-xs font-bold transition-all ${router.locale === 'fr' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}`}
+                className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition-all ${router.locale === 'fr' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}`}
               >
-                FR
+                <Flag country="fr" className="w-4 h-3" /> FR
               </button>
               <button
                 onClick={() => switchLocale('en')}
-                className={`px-2 py-1 rounded text-xs font-bold transition-all ${router.locale === 'en' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}`}
+                className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition-all ${router.locale === 'en' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}`}
               >
-                EN
+                <Flag country="gb" className="w-4 h-3" /> EN
               </button>
             </div>
             <Link href="/contact" className="btn-primary text-sm py-2 px-5">
@@ -92,12 +93,12 @@ export default function Nav() {
           <div className="flex lg:hidden items-center gap-2">
             <div className="flex items-center gap-1 bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg p-1">
               <button onClick={() => switchLocale('fr')}
-                className={`px-2 py-1 rounded text-xs font-bold ${router.locale === 'fr' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)]'}`}>
-                FR
+                className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-bold ${router.locale === 'fr' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)]'}`}>
+                <Flag country="fr" className="w-4 h-3" /> FR
               </button>
               <button onClick={() => switchLocale('en')}
-                className={`px-2 py-1 rounded text-xs font-bold ${router.locale === 'en' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)]'}`}>
-                EN
+                className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-bold ${router.locale === 'en' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)]'}`}>
+                <Flag country="gb" className="w-4 h-3" /> EN
               </button>
             </div>
             <button onClick={() => setIsOpen(!isOpen)} className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors">

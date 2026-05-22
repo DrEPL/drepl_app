@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { Github, Linkedin, Mail, MapPin, Phone } from 'lucide-react';
+import { Github, Linkedin, Mail, MapPin } from 'lucide-react';
+import WhatsAppIcon from './WhatsAppIcon';
 import { useT } from '@/lib/useTranslation';
 
 export default function Footer() {
@@ -77,7 +78,7 @@ export default function Footer() {
                 </a>
               </li>
               <li className="flex items-start gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-[var(--accent-teal)]/30 hover:bg-white/10 transition-colors group">
-                <Phone className="w-5 h-5 text-[var(--accent-teal)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
+                <WhatsAppIcon className="w-5 h-5 text-[var(--accent-teal)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                 <div className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
                   <a href="https://wa.me/221784518582" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
                     +221 78 451 85 82 (WA)

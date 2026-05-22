@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { motion } from 'framer-motion';
-import { Github, Linkedin, Mail, MapPin, Send, Phone } from 'lucide-react';
+import { Github, Linkedin, Mail, MapPin, Send } from 'lucide-react';
+import WhatsAppIcon from '@/components/WhatsAppIcon';
 import { useT } from '@/lib/useTranslation';
 
 export default function Contact() {
@@ -75,7 +76,7 @@ export default function Contact() {
 
                 <div className="flex items-start gap-4">
                   <div className="p-3 bg-[var(--bg-deep)] border border-[var(--border)] rounded-full text-[var(--accent-teal)]">
-                    <Phone size={20} />
+                    <WhatsAppIcon size={20} />
                   </div>
                   <div>
                     <p className="text-sm text-[var(--text-muted)] font-medium mb-1">{t.contact.info_phone}</p>
