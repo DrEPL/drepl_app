@@ -6,6 +6,7 @@ import type { GetStaticPaths, GetStaticProps } from 'next';
 import { supabase, rowToProject } from '@/lib/supabase';
 import type { Project } from '@/data/projects';
 import { ArrowLeft, ArrowUpRight, CheckCircle, Code2, Cpu, Github, LayoutGrid, Lightbulb, Lock, X } from 'lucide-react';
+import { useT } from '@/lib/useTranslation';
 
 interface ProjectDetailProps { project: Project }
 
@@ -17,14 +18,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps<ProjectDetailProps> = async ({ params }) => {
+export const getStaticProps: GetStaticProps<ProjectDetailProps> = async ({ params, locale }) => {
   const slug = params?.slug as string;
   const { data } = await supabase.from('projects').select('*').eq('slug', slug).single();
   if (!data) return { notFound: true };
-  return { props: { project: rowToProject(data) }, revalidate: 60 };
+  return { props: { project: rowToProject(data, locale) }, revalidate: 60 };
 };
 
 export default function ProjectDetail({ project }: ProjectDetailProps) {
+  const t = useT();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   return (
@@ -36,7 +38,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
 
       <div className="container mx-auto px-6 lg:px-12 py-12">
         <Link href="/projets" className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent-teal)] transition-colors text-sm font-medium mb-10">
-          <ArrowLeft size={16} /> Retour aux projets
+          <ArrowLeft size={16} /> {t.project_detail.back}
         </Link>
 
         <div className="glass-dark border border-[var(--border)] rounded-3xl p-8 lg:p-12 mb-12 relative overflow-hidden">
@@ -49,7 +51,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                 </span>
                 {project.developedAt && (
                   <span className="inline-block text-xs font-medium text-[var(--accent-blue)] px-3 py-1 bg-[var(--accent-blue)]/10 rounded-md border border-[var(--accent-blue)]/20">
-                    Projet développé au {project.developedAt}
+                    {t.project_detail.developed_at} {project.developedAt}
                   </span>
                 )}
               </div>
@@ -58,24 +60,24 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
               <div className="flex flex-wrap items-center gap-4">
                 {project.githubUrl && (
                   <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary text-sm flex items-center gap-2">
-                    <Github size={18} /> Code Source
+                    <Github size={18} /> {t.project_detail.source_code}
                   </a>
                 )}
                 {project.isPrivateRepo && (
                   <div className="btn-secondary text-sm flex items-center gap-2 opacity-80 cursor-default">
-                    <Lock size={18} /> Repository privé
+                    <Lock size={18} /> {t.project_detail.private_repo}
                   </div>
                 )}
                 {project.demoUrl && (
                   <a href={project.demoUrl} target="_blank" rel="noopener noreferrer" className="btn-primary text-sm flex items-center gap-2">
-                    <ArrowUpRight size={18} /> Demo Live
+                    <ArrowUpRight size={18} /> {t.project_detail.live_demo}
                   </a>
                 )}
               </div>
             </div>
             <div className="lg:w-1/3 bg-[var(--bg-deep)] rounded-2xl p-6 border border-[var(--border)] self-start">
               <h3 className="font-heading font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                <Code2 size={20} className="text-[var(--accent-teal)]" /> Stack Technique
+                <Code2 size={20} className="text-[var(--accent-teal)]" /> {t.project_detail.tech_stack}
               </h3>
               {project.categorizedTechnologies && project.categorizedTechnologies.length > 0 ? (
                 <div className="space-y-4">
@@ -109,7 +111,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
           <div className="lg:col-span-2 space-y-12">
             <section>
               <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
-                <Lightbulb className="text-amber-500" size={24} /> La Problématique
+                <Lightbulb className="text-amber-500" size={24} /> {t.project_detail.problem_title}
               </h2>
               <p className="text-lg leading-relaxed bg-[var(--bg-surface)] p-6 rounded-2xl border-l-4 border-amber-500 text-[var(--text-secondary)]">
                 {project.problem}
@@ -117,7 +119,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
             </section>
             <section>
               <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
-                <Cpu className="text-[var(--accent-blue)]" size={24} /> La Solution
+                <Cpu className="text-[var(--accent-blue)]" size={24} /> {t.project_detail.solution_title}
               </h2>
               <p className="text-lg leading-relaxed bg-[var(--bg-surface)] p-6 rounded-2xl border-l-4 border-[var(--accent-blue)] text-[var(--text-secondary)]">
                 {project.solution}
@@ -125,7 +127,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
             </section>
             <section>
               <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
-                <CheckCircle className="text-[var(--accent-teal)]" size={24} /> Résultats & Impact
+                <CheckCircle className="text-[var(--accent-teal)]" size={24} /> {t.project_detail.results_title}
               </h2>
               <p className="text-lg leading-relaxed bg-[var(--accent-teal)]/5 p-6 rounded-2xl border border-[var(--accent-teal)]/20 text-[var(--text-primary)]">
                 {project.results}
@@ -155,8 +157,8 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
             ) : (
               <div className="glass-dark border border-[var(--border)] rounded-2xl p-6 text-center">
                 <LayoutGrid className="mx-auto text-[var(--text-muted)] mb-4" size={48} />
-                <h4 className="font-heading font-semibold mb-2">Architecture Visuelle</h4>
-                <p className="text-sm text-[var(--text-muted)]">Les captures d&apos;écran seront bientôt ajoutées.</p>
+                <h4 className="font-heading font-semibold mb-2">{t.project_detail.no_screenshot_title}</h4>
+                <p className="text-sm text-[var(--text-muted)]">{t.project_detail.no_screenshot_desc}</p>
               </div>
             )}
           </div>

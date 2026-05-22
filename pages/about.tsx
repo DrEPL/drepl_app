@@ -144,14 +144,14 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {skillCategories.map((category, idx) => (
               <motion.div
-                key={category.title}
+                key={category.key}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
                 className="glass-dark p-6 lg:p-8 rounded-2xl border border-[var(--border)]"
               >
-                <h3 className="font-heading font-semibold text-lg mb-6 text-[var(--text-primary)] border-b border-[var(--border)] pb-2">{category.title}</h3>
+                <h3 className="font-heading font-semibold text-lg mb-6 text-[var(--text-primary)] border-b border-[var(--border)] pb-2">{t.skills[category.key]}</h3>
                 <div className="space-y-5">
                   {category.skills.map(skill => (
                     <div key={skill.name}>

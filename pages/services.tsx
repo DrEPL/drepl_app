@@ -73,7 +73,7 @@ export default function Services() {
 
                 <div className="lg:col-span-4 bg-[var(--bg-deep)]/50 rounded-2xl p-6 border border-[var(--border)]">
                   <h4 className="font-heading font-semibold text-[var(--text-primary)] mb-4">
-                    {isEn ? 'Key benefits' : 'Bénéfices clés'}
+                    {t.services.key_benefits}
                   </h4>
                   <ul className="space-y-3">
                     {(isEn ? service.benefitsEn : service.benefits).map((benefit, i) => (

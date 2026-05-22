@@ -1,10 +1,14 @@
+export type SkillCategoryKey = 'ai_ml' | 'big_data_cloud' | 'web_mobile' | 'tools_other';
+
 export interface SkillCategory {
+  key: SkillCategoryKey;
   title: string;
   skills: { name: string; level: number }[];
 }
 
 export const skillCategories: SkillCategory[] = [
   {
+    key: 'ai_ml',
     title: 'Intelligence Artificielle & ML',
     skills: [
       { name: 'Python', level: 95 },
@@ -19,6 +23,7 @@ export const skillCategories: SkillCategory[] = [
     ]
   },
   {
+    key: 'big_data_cloud',
     title: 'Big Data & Cloud',
     skills: [
       { name: 'Apache Spark', level: 85 },
@@ -32,6 +37,7 @@ export const skillCategories: SkillCategory[] = [
     ]
   },
   {
+    key: 'web_mobile',
     title: 'Développement Web & Mobile',
     skills: [
       { name: 'FastAPI / Flask / Django', level: 90 },
@@ -45,6 +51,7 @@ export const skillCategories: SkillCategory[] = [
     ]
   },
   {
+    key: 'tools_other',
     title: 'Outils & Autres',
     skills: [
       { name: 'Git / GitHub', level: 95 },

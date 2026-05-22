@@ -74,6 +74,7 @@ const fr = {
     title: 'Mes',
     title_highlight: 'Services',
     subtitle: "Des solutions sur-mesure pour répondre à vos défis technologiques les plus complexes.",
+    key_benefits: 'Bénéfices clés',
     process_title: 'Mon Processus de Collaboration',
     process_subtitle: "Une approche structurée pour garantir des résultats exceptionnels.",
     step1_title: 'Découverte',
@@ -87,6 +88,12 @@ const fr = {
     cta_title: 'Un projet en tête ?',
     cta_desc: "Discutons de vos besoins et construisons ensemble la solution qui fera la différence.",
     cta_btn: 'Discutons de votre projet',
+  },
+  skills: {
+    ai_ml: 'Intelligence Artificielle & ML',
+    big_data_cloud: 'Big Data & Cloud',
+    web_mobile: 'Développement Web & Mobile',
+    tools_other: 'Outils & Autres',
   },
   contact: {
     page_title: 'Contact | Dr EPL',

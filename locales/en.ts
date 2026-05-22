@@ -76,6 +76,7 @@ const en: Translations = {
     title: 'My',
     title_highlight: 'Services',
     subtitle: 'Tailored solutions to address your most complex technological challenges.',
+    key_benefits: 'Key benefits',
     process_title: 'My Collaboration Process',
     process_subtitle: 'A structured approach to guarantee exceptional results.',
     step1_title: 'Discovery',
@@ -89,6 +90,12 @@ const en: Translations = {
     cta_title: 'Have a project in mind?',
     cta_desc: "Let's discuss your needs and build together the solution that will make a difference.",
     cta_btn: 'Discuss your project',
+  },
+  skills: {
+    ai_ml: 'Artificial Intelligence & ML',
+    big_data_cloud: 'Big Data & Cloud',
+    web_mobile: 'Web & Mobile Development',
+    tools_other: 'Tools & Others',
   },
   contact: {
     page_title: 'Contact | Dr EPL',
