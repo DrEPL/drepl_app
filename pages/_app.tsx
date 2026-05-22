@@ -3,10 +3,15 @@ import type { AppProps } from "next/app";
 import Layout from "@/components/Layout";
 import { Analytics } from "@vercel/analytics/next";
 import { DefaultSeo } from "next-seo";
+import { SessionProvider } from "next-auth/react";
+import { useRouter } from "next/router";
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+  const router = useRouter();
+  const isAdminPage = router.pathname.startsWith('/admin');
+
   return (
-    <>
+    <SessionProvider session={session}>
       <DefaultSeo
         title="Dr EPL | Ingénieur IA & Big Data"
         description="Dr EPL, ingenieur IA & Big Data, plateforme spécialisé en Intelligence Artificielle et Big Data. Découvrez nos solutions, services et innovations technologiques."
@@ -36,10 +41,14 @@ export default function App({ Component, pageProps }: AppProps) {
           cardType: 'summary_large_image',
         }}
       />
-      <Layout>
+      {isAdminPage ? (
         <Component {...pageProps} />
-      </Layout>
+      ) : (
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      )}
       <Analytics />
-    </>
+    </SessionProvider>
   );
 }

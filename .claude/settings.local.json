@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(Get-ChildItem -Recurse -Force)",
-      "Bash(Select-Object FullName)"
+      "Bash(Select-Object FullName)",
+      "PowerShell(head -100)",
+      "Bash(npm install *)",
+      "Bash(node -e ' *)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": []
 }

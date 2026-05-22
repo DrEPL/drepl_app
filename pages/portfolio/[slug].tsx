@@ -3,27 +3,25 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { GetStaticPaths, GetStaticProps } from 'next';
-import { projects, type Project } from '@/data/projects';
+import { supabase, rowToProject } from '@/lib/supabase';
+import type { Project } from '@/data/projects';
 import { ArrowLeft, ArrowUpRight, CheckCircle, Code2, Cpu, Github, LayoutGrid, Lightbulb, Lock, X } from 'lucide-react';
 
-interface ProjectDetailProps {
-  project: Project;
-}
+interface ProjectDetailProps { project: Project }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const { data } = await supabase.from('projects').select('slug');
   return {
-    paths: projects.map((p) => ({ params: { slug: p.slug } })),
-    fallback: false,
+    paths: (data || []).map(p => ({ params: { slug: p.slug } })),
+    fallback: 'blocking',
   };
 };
 
 export const getStaticProps: GetStaticProps<ProjectDetailProps> = async ({ params }) => {
   const slug = params?.slug as string;
-  const project = projects.find((p) => p.slug === slug);
-  if (!project) {
-    return { notFound: true };
-  }
-  return { props: { project } };
+  const { data } = await supabase.from('projects').select('*').eq('slug', slug).single();
+  if (!data) return { notFound: true };
+  return { props: { project: rowToProject(data) }, revalidate: 60 };
 };
 
 export default function ProjectDetail({ project }: ProjectDetailProps) {
@@ -37,16 +35,12 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
       </Head>
 
       <div className="container mx-auto px-6 lg:px-12 py-12">
-        
-        {/* Back Link */}
         <Link href="/portfolio" className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent-teal)] transition-colors text-sm font-medium mb-10">
           <ArrowLeft size={16} /> Retour au portfolio
         </Link>
 
-        {/* Hero Area */}
         <div className="glass-dark border border-[var(--border)] rounded-3xl p-8 lg:p-12 mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-[var(--accent-teal)]/5 to-transparent pointer-events-none" />
-          
           <div className="relative z-10 flex flex-col lg:flex-row gap-12">
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -59,13 +53,8 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                   </span>
                 )}
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold mb-6 leading-tight">
-                {project.title}
-              </h1>
-              <p className="text-xl text-[var(--text-secondary)] mb-8 leading-relaxed max-w-2xl">
-                {project.shortDescription}
-              </p>
-              
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold mb-6 leading-tight">{project.title}</h1>
+              <p className="text-xl text-[var(--text-secondary)] mb-8 leading-relaxed max-w-2xl">{project.shortDescription}</p>
               <div className="flex flex-wrap items-center gap-4">
                 {project.githubUrl && (
                   <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary text-sm flex items-center gap-2">
@@ -73,7 +62,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                   </a>
                 )}
                 {project.isPrivateRepo && (
-                  <div className="btn-secondary text-sm flex items-center gap-2 opacity-80 cursor-default" title="Code disponible sur demande">
+                  <div className="btn-secondary text-sm flex items-center gap-2 opacity-80 cursor-default">
                     <Lock size={18} /> Repository privé
                   </div>
                 )}
@@ -84,14 +73,11 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                 )}
               </div>
             </div>
-
-            {/* Tech Stack Box */}
             <div className="lg:w-1/3 bg-[var(--bg-deep)] rounded-2xl p-6 border border-[var(--border)] self-start">
               <h3 className="font-heading font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
                 <Code2 size={20} className="text-[var(--accent-teal)]" /> Stack Technique
               </h3>
-              
-              {project.categorizedTechnologies ? (
+              {project.categorizedTechnologies && project.categorizedTechnologies.length > 0 ? (
                 <div className="space-y-4">
                   {project.categorizedTechnologies.map((cat, idx) => (
                     <div key={idx}>
@@ -119,109 +105,72 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
           </div>
         </div>
 
-        {/* Content Details */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          
           <div className="lg:col-span-2 space-y-12">
-            {/* Problem */}
             <section>
               <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
                 <Lightbulb className="text-amber-500" size={24} /> La Problématique
               </h2>
-              <div className="prose prose-invert max-w-none text-[var(--text-secondary)]">
-                <p className="text-lg leading-relaxed bg-[var(--bg-surface)] p-6 rounded-2xl border-l-4 border-amber-500">
-                  {project.problem}
-                </p>
-              </div>
+              <p className="text-lg leading-relaxed bg-[var(--bg-surface)] p-6 rounded-2xl border-l-4 border-amber-500 text-[var(--text-secondary)]">
+                {project.problem}
+              </p>
             </section>
-
-            {/* Solution */}
             <section>
               <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
                 <Cpu className="text-[var(--accent-blue)]" size={24} /> La Solution
               </h2>
-              <div className="prose prose-invert max-w-none text-[var(--text-secondary)]">
-                <p className="text-lg leading-relaxed bg-[var(--bg-surface)] p-6 rounded-2xl border-l-4 border-[var(--accent-blue)]">
-                  {project.solution}
-                </p>
-              </div>
+              <p className="text-lg leading-relaxed bg-[var(--bg-surface)] p-6 rounded-2xl border-l-4 border-[var(--accent-blue)] text-[var(--text-secondary)]">
+                {project.solution}
+              </p>
             </section>
-            
-            {/* Results */}
             <section>
               <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
                 <CheckCircle className="text-[var(--accent-teal)]" size={24} /> Résultats & Impact
               </h2>
-              <div className="prose prose-invert max-w-none text-[var(--text-secondary)]">
-                <p className="text-lg leading-relaxed bg-[var(--accent-teal)]/5 p-6 rounded-2xl border border-[var(--accent-teal)]/20 text-[var(--text-primary)]">
-                  {project.results}
-                </p>
-              </div>
+              <p className="text-lg leading-relaxed bg-[var(--accent-teal)]/5 p-6 rounded-2xl border border-[var(--accent-teal)]/20 text-[var(--text-primary)]">
+                {project.results}
+              </p>
             </section>
           </div>
-
-          {/* Sidebar Visuals */}
           <div className="lg:col-span-1 space-y-8">
-             {project.screenshots && project.screenshots.length > 0 ? (
-               <div className="flex flex-col gap-6">
-                 {project.screenshots.map((screenshot, index) => (
-                   <div 
-                     key={index} 
-                     className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-deep)] transition-all hover:border-[var(--accent-teal)]/50 hover:shadow-lg hover:shadow-[var(--accent-teal)]/10"
-                     onClick={() => setSelectedImage(screenshot.url)}
-                   >
-                     <div className="relative aspect-video w-full overflow-hidden">
-                       <Image 
-                         src={screenshot.url} 
-                         alt={screenshot.title}
-                         fill
-                         sizes="(max-width: 1024px) 100vw, 33vw"
-                         className="object-cover transition-transform duration-500 group-hover:scale-105"
-                       />
-                     </div>
-                     <div className="p-4 border-t border-[var(--border)]">
-                       <h4 className="font-heading font-semibold text-sm mb-1 text-[var(--text-primary)]">{screenshot.title}</h4>
-                       <p className="text-xs text-[var(--text-muted)] leading-relaxed">{screenshot.description}</p>
-                     </div>
-                   </div>
-                 ))}
-               </div>
-             ) : (
-               <div className="glass-dark border border-[var(--border)] rounded-2xl p-6 text-center">
-                  <LayoutGrid className="mx-auto text-[var(--text-muted)] mb-4" size={48} />
-                  <h4 className="font-heading font-semibold mb-2">Architecture Visuelle</h4>
-                  <p className="text-sm text-[var(--text-muted)]">Les schémas d'architecture et les captures d'écran du projet seront bientôt ajoutés.</p>
-               </div>
-             )}
+            {project.screenshots && project.screenshots.length > 0 ? (
+              <div className="flex flex-col gap-6">
+                {project.screenshots.map((screenshot, index) => (
+                  <div
+                    key={index}
+                    className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-deep)] transition-all hover:border-[var(--accent-teal)]/50"
+                    onClick={() => setSelectedImage(screenshot.url)}
+                  >
+                    <div className="relative aspect-video w-full overflow-hidden">
+                      <Image src={screenshot.url} alt={screenshot.title} fill sizes="(max-width: 1024px) 100vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    </div>
+                    <div className="p-4 border-t border-[var(--border)]">
+                      <h4 className="font-heading font-semibold text-sm mb-1 text-[var(--text-primary)]">{screenshot.title}</h4>
+                      <p className="text-xs text-[var(--text-muted)] leading-relaxed">{screenshot.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="glass-dark border border-[var(--border)] rounded-2xl p-6 text-center">
+                <LayoutGrid className="mx-auto text-[var(--text-muted)] mb-4" size={48} />
+                <h4 className="font-heading font-semibold mb-2">Architecture Visuelle</h4>
+                <p className="text-sm text-[var(--text-muted)]">Les captures d&apos;écran seront bientôt ajoutées.</p>
+              </div>
+            )}
           </div>
-
         </div>
-
       </div>
 
-      {/* Lightbox */}
       {selectedImage && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <button 
-            className="absolute top-6 right-6 text-white hover:text-[var(--accent-teal)] transition-colors p-2 rounded-full bg-white/10 hover:bg-white/20"
-            onClick={(e) => {
-              e.stopPropagation();
-              setSelectedImage(null);
-            }}
-          >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setSelectedImage(null)}>
+          <button className="absolute top-6 right-6 text-white hover:text-[var(--accent-teal)] transition-colors p-2 rounded-full bg-white/10"
+            onClick={e => { e.stopPropagation(); setSelectedImage(null); }}>
             <X size={24} />
           </button>
           <div className="relative w-full max-w-5xl aspect-video rounded-xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
-            <Image 
-              src={selectedImage} 
-              alt="Vue agrandie"
-              fill
-              sizes="100vw"
-              className="object-contain"
-            />
+            <Image src={selectedImage} alt="Vue agrandie" fill sizes="100vw" className="object-contain" />
           </div>
         </div>
       )}
