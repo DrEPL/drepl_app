@@ -8,8 +8,9 @@ import ParticleCanvas from '@/components/ParticleCanvas';
 import type { GetStaticProps } from 'next';
 import { supabase, rowToProject } from '@/lib/supabase';
 import type { Project } from '@/data/projects';
-import type { Service } from '@/data/services';
+import { services } from '@/data/services';
 import { useT } from '@/lib/useTranslation';
+import { useRouter } from 'next/router';
 
 const techLogos = [
   { name: 'Python', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
@@ -32,7 +33,6 @@ const techLogos = [
 
 interface HomeProps {
   projects: Project[];
-  services: Service[];
 }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
@@ -41,18 +41,18 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     .select('*')
     .order('display_order', { ascending: true })
     .limit(3);
-  const { services } = await import('@/data/services');
   return {
     props: {
       projects: (data || []).map(p => rowToProject(p, locale)),
-      services,
     },
     revalidate: 60,
   };
 };
 
-export default function Home({ projects, services }: HomeProps) {
+export default function Home({ projects }: HomeProps) {
   const t = useT();
+  const { locale } = useRouter();
+  const isEn = locale === 'en';
 
   return (
     <div className="overflow-x-hidden">
@@ -190,8 +190,8 @@ export default function Home({ projects, services }: HomeProps) {
                 <div className="w-14 h-14 rounded-xl bg-[var(--bg-deep)] border border-[var(--border)] flex items-center justify-center mb-6 group-hover:bg-[var(--accent-teal)]/10 transition-colors relative z-10">
                   <service.icon className="w-7 h-7 text-[var(--accent-teal)]" />
                 </div>
-                <h3 className="text-xl font-bold font-heading mb-3 relative z-10">{service.title}</h3>
-                <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-4">{service.description}</p>
+                <h3 className="text-xl font-bold font-heading mb-3 relative z-10">{isEn ? service.titleEn : service.title}</h3>
+                <p className="text-[var(--text-secondary)] text-sm leading-relaxed mb-4">{isEn ? service.descriptionEn : service.description}</p>
                 <Link href="/services" className="text-sm text-[var(--accent-teal)] font-medium flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   {t.home.services_discover} <ArrowRight size={14} />
                 </Link>
