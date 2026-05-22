@@ -49,7 +49,7 @@ export default function Footer() {
                 { label: 'Accueil', path: '/' },
                 { label: 'À Propos', path: '/about' },
                 { label: 'Services', path: '/services' },
-                { label: 'Portfolio', path: '/portfolio' },
+                { label: 'Projets', path: '/projets' },
                 { label: 'Contact', path: '/contact' }
               ].map((link) => (
                 <li key={link.path}>

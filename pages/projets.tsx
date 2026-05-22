@@ -34,13 +34,13 @@ export default function Portfolio({ projects }: Props) {
   return (
     <>
       <Head>
-        <title>Portfolio | Dr EPL</title>
+        <title>Projets | Dr EPL</title>
         <meta name="description" content="Découvrez mes projets en Intelligence Artificielle, Big Data et développement d'applications." />
       </Head>
 
       <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-20">
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-heading font-extrabold mb-4">Mon <span className="teal-gradient-text">Portfolio</span></h1>
+          <h1 className="text-4xl md:text-5xl font-heading font-extrabold mb-4">Mes <span className="teal-gradient-text">Projets</span></h1>
           <div className="w-20 h-1 bg-[var(--accent-teal)] rounded-full mb-6"></div>
           <p className="text-[var(--text-secondary)] text-lg max-w-2xl">
             Exploration de cas d&apos;usage réels : de la modélisation de données complexes au déploiement d&apos;API intelligentes.
@@ -117,7 +117,7 @@ export default function Portfolio({ projects }: Props) {
                       </span>
                     )}
                   </div>
-                  <Link href={`/portfolio/${project.slug}`} className="text-sm font-medium flex items-center justify-between w-full pt-4 border-t border-[var(--border)] group/link">
+                  <Link href={`/projets/${project.slug}`} className="text-sm font-medium flex items-center justify-between w-full pt-4 border-t border-[var(--border)] group/link">
                     <span className="text-[var(--text-primary)] group-hover/link:text-[var(--accent-teal)] transition-colors">Découvrir le projet</span>
                     <ArrowRight size={16} className="text-[var(--accent-teal)] group-hover/link:translate-x-1 transition-transform" />
                   </Link>

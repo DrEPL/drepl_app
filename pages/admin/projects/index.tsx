@@ -97,7 +97,7 @@ export default function ProjectsList({ projects: initialProjects }: Props) {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <Link
-                        href={`/portfolio/${project.slug}`}
+                        href={`/projets/${project.slug}`}
                         target="_blank"
                         className="p-2 rounded-lg text-[var(--text-muted)] hover:text-[var(--accent-teal)] hover:bg-[var(--accent-teal)]/10 transition-colors"
                         title="Voir"

@@ -7,7 +7,7 @@ const navLinks = [
   { name: 'Accueil', path: '/' },
   { name: 'À Propos', path: '/about' },
   { name: 'Services', path: '/services' },
-  { name: 'Portfolio', path: '/portfolio' },
+  { name: 'Projets', path: '/projets' },
 ];
 
 export default function Nav() {

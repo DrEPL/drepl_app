@@ -35,8 +35,8 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
       </Head>
 
       <div className="container mx-auto px-6 lg:px-12 py-12">
-        <Link href="/portfolio" className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent-teal)] transition-colors text-sm font-medium mb-10">
-          <ArrowLeft size={16} /> Retour au portfolio
+        <Link href="/projets" className="inline-flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--accent-teal)] transition-colors text-sm font-medium mb-10">
+          <ArrowLeft size={16} /> Retour aux projets
         </Link>
 
         <div className="glass-dark border border-[var(--border)] rounded-3xl p-8 lg:p-12 mb-12 relative overflow-hidden">

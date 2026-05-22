@@ -26,8 +26,8 @@ export default function NotFound() {
             <Link href="/" className="btn-primary flex items-center justify-center gap-2">
               <Home size={18} /> Accueil
             </Link>
-            <Link href="/portfolio" className="btn-secondary flex items-center justify-center gap-2">
-              <ArrowLeft size={18} /> Voir le portfolio
+            <Link href="/projets" className="btn-secondary flex items-center justify-center gap-2">
+              <ArrowLeft size={18} /> Voir les projets
             </Link>
           </div>
         </div>

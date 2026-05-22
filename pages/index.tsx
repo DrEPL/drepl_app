@@ -72,7 +72,7 @@ export default function Home() {
               </p>
               
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <Link href="/portfolio" className="btn-primary w-full sm:w-auto text-center flex items-center justify-center gap-2">
+                <Link href="/projets" className="btn-primary w-full sm:w-auto text-center flex items-center justify-center gap-2">
                   Voir mes Projets <ArrowRight size={18} />
                 </Link>
                 <Link href="/contact" className="btn-secondary w-full sm:w-auto text-center">
@@ -194,8 +194,8 @@ export default function Home() {
                 Une sélection de mes réalisations les plus impactantes en IA et ingénierie de données.
               </p>
             </div>
-            <Link href="/portfolio" className="hidden md:flex items-center gap-2 text-[var(--accent-teal)] hover:underline mt-4 md:mt-0 font-medium">
-              Voir tout le portfolio <ArrowRight size={16} />
+            <Link href="/projets" className="hidden md:flex items-center gap-2 text-[var(--accent-teal)] hover:underline mt-4 md:mt-0 font-medium">
+              Voir tous les projets <ArrowRight size={16} />
             </Link>
           </div>
 
@@ -221,7 +221,7 @@ export default function Home() {
                   <h3 className="text-xl font-bold font-heading mb-2 group-hover:text-[var(--accent-teal)] transition-colors">{project.title}</h3>
                   <p className="text-[var(--text-secondary)] text-sm mb-6 flex-grow">{project.shortDescription}</p>
                   
-                  <Link href={`/portfolio/${project.slug}`} className="text-sm font-medium flex items-center gap-2 group/link mt-auto">
+                  <Link href={`/projets/${project.slug}`} className="text-sm font-medium flex items-center gap-2 group/link mt-auto">
                     Voir les détails <ArrowRight size={16} className="group-hover/link:translate-x-1 transition-transform" />
                   </Link>
                 </div>
@@ -230,7 +230,7 @@ export default function Home() {
           </div>
           
           <div className="text-center mt-8 md:hidden">
-            <Link href="/portfolio" className="btn-secondary inline-block">Voir tout le portfolio</Link>
+            <Link href="/projets" className="btn-secondary inline-block">Voir tous les projets</Link>
           </div>
         </div>
       </section>
