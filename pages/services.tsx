@@ -23,7 +23,7 @@ export default function Services() {
     <>
       <Head>
         <title>{t.services.page_title}</title>
-        <meta name="description" content="Découvrez mes services en Développement IA, Ingénierie Big Data, et Applications Intelligentes." />
+        <meta name="description" content={t.meta.services_description} />
       </Head>
 
       <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-20">

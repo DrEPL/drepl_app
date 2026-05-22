@@ -37,7 +37,7 @@ export default function Portfolio({ projects }: Props) {
     <>
       <Head>
         <title>{t.projects.page_title}</title>
-        <meta name="description" content="Découvrez mes projets en Intelligence Artificielle, Big Data et développement d'applications." />
+        <meta name="description" content={t.meta.projects_description} />
       </Head>
 
       <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-20">

@@ -4,19 +4,22 @@ import Layout from "@/components/Layout";
 import { Analytics } from "@vercel/analytics/next";
 import { DefaultSeo } from "next-seo";
 import { useRouter } from "next/router";
+import { useT } from "@/lib/useTranslation";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const isAdminPage = router.pathname.startsWith('/admin');
+  const t = useT();
+  const ogLocale = router.locale === 'en' ? 'en_US' : 'fr_FR';
 
   return (
     <>
       <DefaultSeo
-        title="Dr EPL | Ingénieur IA & Big Data"
-        description="Dr EPL, ingenieur IA & Big Data, plateforme spécialisé en Intelligence Artificielle et Big Data. Découvrez nos solutions, services et innovations technologiques."
+        title={t.meta.default_title}
+        description={t.meta.default_description}
         openGraph={{
           type: 'website',
-          locale: 'fr_FR',
+          locale: ogLocale,
           url: 'https://drepl.cg/',
           siteName: 'Dr EPL',
           images: [

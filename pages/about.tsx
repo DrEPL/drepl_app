@@ -12,7 +12,7 @@ export default function About() {
     <>
       <Head>
         <title>{t.about.page_title}</title>
-        <meta name="description" content="Découvrez mon parcours, ma philosophie et mon expertise technique en Intelligence Artificielle et Big Data." />
+        <meta name="description" content={t.meta.about_description} />
       </Head>
 
       <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-20">

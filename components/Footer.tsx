@@ -36,7 +36,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-[var(--text-secondary)] text-sm max-w-sm leading-relaxed">
-              Ingénieur IA &amp; Big Data passionné par le développement de solutions intelligentes et innovantes, adaptées aux réalités africaines. Transformons vos idées en réalité.
+              {t.footer.bio}
             </p>
             <div className="flex items-center gap-4 pt-4">
               <a href="https://github.com/DrEPL" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-xl text-[var(--text-secondary)] hover:text-white hover:bg-[var(--accent-teal)] transition-all duration-300 shadow-sm hover:shadow-[0_0_15px_rgba(45,212,191,0.4)] border border-[var(--border)] hover:border-transparent group">
@@ -90,7 +90,7 @@ export default function Footer() {
               <li className="flex items-start gap-4 p-3 rounded-xl bg-white/5 border border-white/5 hover:border-[var(--accent-teal)]/30 hover:bg-white/10 transition-colors group">
                 <MapPin className="w-5 h-5 text-[var(--accent-teal)] flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform" />
                 <span className="text-sm text-[var(--text-secondary)] group-hover:text-white transition-colors">
-                  Dakar, Sénégal<br />(Disponible en remote)
+                  {t.footer.location}<br />{t.footer.location_remote}
                 </span>
               </li>
             </ul>

@@ -37,7 +37,7 @@ export default function Contact() {
     <>
       <Head>
         <title>{t.contact.page_title}</title>
-        <meta name="description" content="Contactez-moi pour discuter de vos projets en Intelligence Artificielle et Big Data." />
+        <meta name="description" content={t.meta.contact_description} />
       </Head>
 
       <div className="container mx-auto px-6 lg:px-12 py-12 lg:py-20">
@@ -58,7 +58,7 @@ export default function Contact() {
           {/* Contact Info Sidebar */}
           <div className="lg:col-span-4 space-y-8">
             <div className="glass-dark border border-[var(--border)] rounded-3xl p-8">
-              <h3 className="font-heading text-2xl font-bold mb-6">Informations</h3>
+              <h3 className="font-heading text-2xl font-bold mb-6">{t.contact.info_section_title}</h3>
 
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -126,12 +126,12 @@ export default function Contact() {
               transition={{ duration: 0.5 }}
               className="glass-dark border border-[var(--border)] rounded-3xl p-8 lg:p-12"
             >
-              <h2 className="font-heading text-2xl font-bold mb-8">Envoyez-moi un message</h2>
+              <h2 className="font-heading text-2xl font-bold mb-8">{t.contact.form_section_title}</h2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Honeypot anti-bot */}
                 <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', width: 1, height: 1, overflow: 'hidden' }}>
-                  <label htmlFor="website">Ne pas remplir</label>
+                  <label htmlFor="website">{t.contact.honeypot_label}</label>
                   <input
                     type="text"
                     id="website"
@@ -154,7 +154,7 @@ export default function Contact() {
                       value={formData.name}
                       onChange={handleChange}
                       className="w-full bg-[var(--bg-deep)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-teal)] focus:ring-1 focus:ring-[var(--accent-teal)] transition-colors"
-                      placeholder="John Doe"
+                      placeholder={t.contact.name_placeholder}
                     />
                   </div>
                   <div className="space-y-2">
@@ -167,7 +167,7 @@ export default function Contact() {
                       value={formData.email}
                       onChange={handleChange}
                       className="w-full bg-[var(--bg-deep)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-teal)] focus:ring-1 focus:ring-[var(--accent-teal)] transition-colors"
-                      placeholder="john@company.com"
+                      placeholder={t.contact.email_placeholder}
                     />
                   </div>
                 </div>
@@ -182,7 +182,7 @@ export default function Contact() {
                     value={formData.subject}
                     onChange={handleChange}
                     className="w-full bg-[var(--bg-deep)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-teal)] focus:ring-1 focus:ring-[var(--accent-teal)] transition-colors"
-                    placeholder="Proposition de mission / Demande de devis"
+                    placeholder={t.contact.subject_placeholder}
                   />
                 </div>
 
@@ -196,7 +196,7 @@ export default function Contact() {
                     value={formData.message}
                     onChange={handleChange}
                     className="w-full bg-[var(--bg-deep)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-teal)] focus:ring-1 focus:ring-[var(--accent-teal)] transition-colors resize-none"
-                    placeholder="Détaillez votre projet ou vos besoins..."
+                    placeholder={t.contact.message_placeholder}
                   ></textarea>
                 </div>
 

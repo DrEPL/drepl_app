@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Nav from './Nav';
 import Footer from './Footer';
 import ScrollToTop from './ScrollToTop';
+import { useT } from '@/lib/useTranslation';
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,16 +11,15 @@ interface LayoutProps {
   description?: string;
 }
 
-export default function Layout({ 
-  children, 
-  title = "Dr EPL | Ingénieur IA & Big Data", 
-  description = "Portfolio professionnel de Dolnick Prudhome ENZANZA, Ingénieur en Intelligence Artificielle et Big Data. Solutions innovantes pour l'Afrique."
-}: LayoutProps) {
+export default function Layout({ children, title, description }: LayoutProps) {
+  const t = useT();
+  const resolvedTitle = title ?? t.meta.default_title;
+  const resolvedDescription = description ?? t.meta.default_description;
   return (
     <>
       <Head>
-        <title>{title}</title>
-        <meta name="description" content={description} />
+        <title>{resolvedTitle}</title>
+        <meta name="description" content={resolvedDescription} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
         {/* Schema.org for Person */}
@@ -30,7 +30,7 @@ export default function Layout({
               "@context": "https://schema.org",
               "@type": "Person",
               "name": "Dolnick Prudhome ENZANZA",
-              "jobTitle": "Ingénieur IA & Big Data",
+              "jobTitle": t.meta.job_title,
               "url": "https://drepl.cg",
               "sameAs": [
                 "https://www.linkedin.com/in/dolnick-prudhome-enzanza-024159246",
