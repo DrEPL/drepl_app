@@ -147,6 +147,9 @@ const en: Translations = {
     filter_all: 'All',
     discover: 'Discover project',
     empty: 'No projects found for this category.',
+    featured_badge: 'Recent',
+    stat_projects: 'Projects',
+    stat_domains: 'Domains',
   },
   project_detail: {
     back: 'Back to projects',

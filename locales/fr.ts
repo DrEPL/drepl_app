@@ -145,6 +145,9 @@ const fr = {
     filter_all: 'Tous',
     discover: 'Découvrir le projet',
     empty: 'Aucun projet trouvé pour cette catégorie.',
+    featured_badge: 'Récent',
+    stat_projects: 'Projets',
+    stat_domains: 'Domaines',
   },
   project_detail: {
     back: 'Retour aux projets',
