@@ -61,6 +61,13 @@ export default function Home({ projects }: HomeProps) {
       <section className="relative min-h-[90vh] flex items-center justify-center pt-20 pb-32">
         <ParticleCanvas />
 
+        {/* Ambient gradient orbs */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full bg-[var(--accent-teal)]/10 blur-3xl animate-ambient-drift" />
+          <div className="absolute top-1/3 -right-32 w-[460px] h-[460px] rounded-full bg-[var(--accent-blue)]/10 blur-3xl animate-ambient-drift" style={{ animationDelay: '-6s' }} />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[520px] h-[280px] rounded-full bg-[var(--accent-teal)]/5 blur-3xl animate-ambient-drift" style={{ animationDelay: '-12s' }} />
+        </div>
+
         <div className="container mx-auto px-6 lg:px-12 relative z-10">
           <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12">
 
@@ -115,6 +122,14 @@ export default function Home({ projects }: HomeProps) {
 
           </div>
         </div>
+
+        {/* Scroll indicator */}
+        <div aria-hidden className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 opacity-60">
+          <div className="relative w-[1px] h-10 bg-gradient-to-b from-transparent via-[var(--accent-teal)]/40 to-transparent overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-2 bg-[var(--accent-teal)] rounded-full animate-scroll-dot" />
+          </div>
+          <span className="font-code text-[10px] tracking-[0.3em] text-[var(--text-muted)] uppercase">Scroll</span>
+        </div>
       </section>
 
       {/* ── ABOUT SNAPSHOT ── */}
@@ -125,7 +140,7 @@ export default function Home({ projects }: HomeProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 glass-dark rounded-3xl p-8 lg:p-12"
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 glass-dark rounded-3xl p-8 lg:p-12 animate-border-glow"
           >
             <div className="md:col-span-2">
               <h3 className="font-heading text-2xl sm:text-3xl font-bold mb-4">{t.home.about_title}</h3>
@@ -168,7 +183,7 @@ export default function Home({ projects }: HomeProps) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="glass-dark rounded-2xl p-8 border border-[var(--border)] hover:border-[var(--accent-teal)] transition-colors group cursor-pointer relative overflow-hidden"
+                className="glass-dark rounded-2xl p-8 border border-[var(--border)] hover:border-[var(--accent-teal)] hover:-translate-y-1 hover:shadow-[0_18px_40px_-20px_rgba(0,191,166,0.45)] transition-all duration-300 group cursor-pointer relative overflow-hidden"
               >
                 {/* Giant SVG Watermark */}
                 <div className="absolute -bottom-6 -right-6 text-[var(--text-muted)] opacity-[0.03] group-hover:opacity-[0.08] transition-all duration-700 group-hover:scale-110 transform z-0 pointer-events-none">
@@ -218,7 +233,7 @@ export default function Home({ projects }: HomeProps) {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group glass-dark rounded-2xl overflow-hidden border border-[var(--border)] hover:border-[var(--accent-teal)] transition-all flex flex-col h-full"
+                className="group glass-dark rounded-2xl overflow-hidden border border-[var(--border)] hover:border-[var(--accent-teal)] hover:-translate-y-1 hover:shadow-[0_22px_50px_-24px_rgba(0,191,166,0.5)] transition-all duration-300 flex flex-col h-full"
               >
                 <div className="relative h-48 w-full bg-[var(--bg-elevated)] border-b border-[var(--border)] overflow-hidden">
                   {hasImage ? (
@@ -270,19 +285,38 @@ export default function Home({ projects }: HomeProps) {
           <h3 className="font-code text-sm text-[var(--text-secondary)] uppercase tracking-widest">{t.home.tech_label}</h3>
         </div>
 
-        <div className="flex w-max animate-marquee hover:[animation-play-state:paused] relative z-0">
-          {[...techLogos, ...techLogos, ...techLogos].map((tech, index) => (
-            <div key={index} className="inline-flex items-center gap-4 px-8 py-4 mx-3 glass-dark rounded-2xl border border-[var(--border)] text-[var(--text-primary)] font-medium text-base hover:border-[var(--accent-teal)] hover:shadow-[0_0_15px_rgba(0,191,166,0.2)] transition-all cursor-default">
-              <img src={tech.icon} alt={tech.name} className="w-8 h-8 object-contain" />
-              {tech.name}
-            </div>
-          ))}
+        <div className="flex flex-col gap-4 relative z-0">
+          <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
+            {[...techLogos, ...techLogos, ...techLogos].map((tech, index) => (
+              <div key={`row1-${index}`} className="inline-flex items-center gap-4 px-8 py-4 mx-3 glass-dark rounded-2xl border border-[var(--border)] text-[var(--text-primary)] font-medium text-base hover:border-[var(--accent-teal)] hover:shadow-[0_0_15px_rgba(0,191,166,0.2)] transition-all cursor-default">
+                <img src={tech.icon} alt={tech.name} className="w-8 h-8 object-contain" />
+                {tech.name}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex w-max animate-marquee-reverse hover:[animation-play-state:paused] opacity-80">
+            {[...techLogos.slice().reverse(), ...techLogos.slice().reverse(), ...techLogos.slice().reverse()].map((tech, index) => (
+              <div key={`row2-${index}`} className="inline-flex items-center gap-3 px-6 py-3 mx-3 glass-dark rounded-xl border border-[var(--border)] text-[var(--text-secondary)] font-medium text-sm hover:border-[var(--accent-blue)] hover:text-[var(--text-primary)] hover:shadow-[0_0_15px_rgba(88,166,255,0.2)] transition-all cursor-default">
+                <img src={tech.icon} alt={tech.name} className="w-6 h-6 object-contain" />
+                {tech.name}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ── CTA SECTION ── */}
       <section className="py-24 relative overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--accent-teal)]/5 rounded-full blur-3xl -z-10" />
+
+        {/* Concentric pulsing rings */}
+        <div aria-hidden className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 pointer-events-none">
+          <div className="absolute -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full border border-[var(--accent-teal)]/30 animate-pulse-ring" />
+          <div className="absolute -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full border border-[var(--accent-teal)]/25 animate-pulse-ring" style={{ animationDelay: '-1.3s' }} />
+          <div className="absolute -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full border border-[var(--accent-blue)]/25 animate-pulse-ring" style={{ animationDelay: '-2.6s' }} />
+        </div>
+
         <div className="container mx-auto px-6 lg:px-12 text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
