@@ -82,7 +82,7 @@ code, pre {
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: var(--accent-teal-dark);
   /* accent-teal-dark */
 }
 
@@ -117,6 +117,61 @@ code, pre {
 
 .animate-border-glow {
   animation: border-glow 3s ease-in-out infinite;
+}
+
+@keyframes grain-shift {
+  0%, 100% { transform: translate(0, 0); }
+  10%      { transform: translate(-2%, -3%); }
+  20%      { transform: translate(-4%, 2%); }
+  30%      { transform: translate(2%, -3%); }
+  40%      { transform: translate(3%, 2%); }
+  50%      { transform: translate(-2%, 3%); }
+  60%      { transform: translate(-4%, 2%); }
+  70%      { transform: translate(3%, 2%); }
+  80%      { transform: translate(-2%, -2%); }
+  90%      { transform: translate(2%, 3%); }
+}
+
+.grain-anim {
+  animation: grain-shift 8s steps(10) infinite;
+  will-change: transform;
+}
+
+@keyframes organic-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%      { transform: translate(4px, -6px) scale(1.02); }
+  66%      { transform: translate(-3px, 5px) scale(0.99); }
+}
+
+.animate-organic {
+  animation: organic-float 14s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain-anim, .animate-organic, .hero-avatar-blob, .hero-avatar-orbit { animation: none; }
+}
+
+/* ─── Hero avatar — organic morphing blob + slow orbit ─────────── */
+@keyframes blob-morph {
+  0%, 100% { border-radius: 58% 42% 51% 49% / 47% 55% 45% 53%; transform: rotate(0deg) scale(1); }
+  33%      { border-radius: 42% 58% 60% 40% / 55% 45% 55% 45%; transform: rotate(120deg) scale(1.04); }
+  66%      { border-radius: 53% 47% 38% 62% / 60% 40% 60% 40%; transform: rotate(240deg) scale(0.97); }
+}
+
+.hero-avatar-blob {
+  border-radius: 58% 42% 51% 49% / 47% 55% 45% 53%;
+  animation: blob-morph 18s ease-in-out infinite;
+  will-change: transform, border-radius;
+}
+
+@keyframes orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+.hero-avatar-orbit {
+  animation: orbit-spin 40s linear infinite;
+  will-change: transform;
 }
 
 /* ─── Utilities ────────────────────────────────────────────────── */

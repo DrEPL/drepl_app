@@ -159,6 +159,15 @@ export const TRANSLATABLE_JSONB_FIELDS = [
   'pipeline_steps',
 ] as const;
 
+// Returns both FR and EN snapshots of a project — used by pages that want to
+// switch locale client-side without re-fetching getStaticProps.
+export function rowToProjectBilingual(row: ProjectRow) {
+  return {
+    fr: rowToProject(row, 'fr'),
+    en: rowToProject(row, 'en'),
+  };
+}
+
 export function rowToProject(row: ProjectRow, locale: string = 'fr') {
   const isEn = locale === 'en';
   return {

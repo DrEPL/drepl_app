@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { GetStaticPaths, GetStaticProps } from 'next';
-import { supabase, rowToProject, pickLocale } from '@/lib/supabase';
+import { supabase, rowToProjectBilingual, pickLocale } from '@/lib/supabase';
 import type { Project } from '@/data/projects';
 import {
   ArrowLeft, ArrowUpRight, Code2, Github, LayoutGrid, Lock, X,
@@ -18,11 +18,14 @@ import {
 import { Prose } from '@/components/Prose';
 import { TechChip } from '@/components/TechChip';
 import { CategoryBackdrop } from '@/components/CategoryBackdrop';
-import { GrainOverlay } from '@/components/GrainOverlay';
 import { useT } from '@/lib/useTranslation';
 import { useRouter } from 'next/router';
 
-interface ProjectDetailProps { project: Project }
+interface ProjectDetailProps {
+  // Both locales are shipped together so the client can switch language without
+  // re-fetching the page's static props (no perceived refresh on locale toggle).
+  bilingual: { fr: Project; en: Project };
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const { data } = await supabase.from('projects').select('slug');
@@ -32,11 +35,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
   };
 };
 
-export const getStaticProps: GetStaticProps<ProjectDetailProps> = async ({ params, locale }) => {
+export const getStaticProps: GetStaticProps<ProjectDetailProps> = async ({ params }) => {
   const slug = params?.slug as string;
   const { data } = await supabase.from('projects').select('*').eq('slug', slug).single();
   if (!data) return { notFound: true };
-  return { props: { project: rowToProject(data, locale) }, revalidate: 60 };
+  return { props: { bilingual: rowToProjectBilingual(data) }, revalidate: 60 };
 };
 
 // Shared scroll-triggered entrance animation
@@ -80,10 +83,18 @@ const KPI_ACCENTS = [
   },
 ];
 
-export default function ProjectDetail({ project }: ProjectDetailProps) {
+export default function ProjectDetail({ bilingual }: ProjectDetailProps) {
   const t = useT();
   const router = useRouter();
-  const locale = router.locale ?? 'fr';
+  const locale = (router.locale ?? 'fr') as 'fr' | 'en';
+  const project = bilingual[locale] ?? bilingual.fr;
+
+  // Prefetch the alternate locale's variant once, so the first toggle is instant.
+  useEffect(() => {
+    const alt = locale === 'fr' ? 'en' : 'fr';
+    router.prefetch(router.pathname, router.asPath, { locale: alt });
+  }, [locale, router]);
+
   const screenshots = project.screenshots ?? [];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -131,8 +142,6 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
         {/* HERO */}
         <div className="glass-dark border border-[var(--border)] rounded-3xl p-8 lg:p-12 mb-12 relative overflow-hidden">
           <CategoryBackdrop category={project.category} />
-          <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-[var(--accent-teal)]/5 to-transparent pointer-events-none" />
-          <GrainOverlay variant="grunge" opacity={0.3} />
           <div className="relative z-10 flex flex-col lg:flex-row gap-12">
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -149,7 +158,18 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                   />
                 )}
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold mb-6 leading-tight">{project.title}</h1>
+              <div className="relative isolate mb-6">
+                <div
+                  aria-hidden
+                  className="absolute inset-0 -mx-10 -my-4 -z-10 pointer-events-none"
+                  style={{
+                    background:
+                      'radial-gradient(ellipse 75% 110% at 25% 50%, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 45%, transparent 75%)',
+                    filter: 'blur(18px)',
+                  }}
+                />
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold leading-tight">{project.title}</h1>
+              </div>
               <p className="text-xl text-[var(--text-secondary)] mb-8 leading-relaxed max-w-2xl">{project.shortDescription}</p>
               <div className="flex flex-wrap items-center gap-4">
                 {project.githubUrl && (

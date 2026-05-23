@@ -1,9 +1,88 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Menu, X, Globe } from 'lucide-react';
+import { Menu, X, Globe, ChevronDown } from 'lucide-react';
 import { useT } from '@/lib/useTranslation';
 import Flag from './Flag';
+
+const LOCALES = [
+  { code: 'fr', label: 'FR', flag: 'fr' as const },
+  { code: 'en', label: 'EN', flag: 'gb' as const },
+];
+
+function LocaleSelector({ current, onSelect }: { current: string; onSelect: (code: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const currentLocale = LOCALES.find(l => l.code === current) ?? LOCALES[0];
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onDocDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        aria-label="Change language"
+        onClick={() => setOpen(o => !o)}
+        className="inline-flex items-center gap-1.5 bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg pl-2 pr-2 py-1.5 text-xs font-bold text-[var(--text-primary)] hover:border-[var(--text-muted)] focus:outline-none focus:border-[var(--accent-teal)] transition-colors cursor-pointer"
+      >
+        <Globe size={14} className="text-[var(--text-muted)]" />
+        <Flag country={currentLocale.flag} className="w-6 h-4 shadow-sm ring-1 ring-black/30" />
+        <span>{currentLocale.label}</span>
+        <ChevronDown
+          size={12}
+          className={`text-[var(--text-muted)] transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
+      {open && (
+        <ul
+          role="listbox"
+          className="absolute right-0 top-full mt-1 min-w-full bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+        >
+          {LOCALES.map(l => {
+            const selected = l.code === current;
+            return (
+              <li key={l.code}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={selected}
+                  onClick={() => {
+                    onSelect(l.code);
+                    setOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-bold transition-colors cursor-pointer ${
+                    selected
+                      ? 'bg-[var(--accent-teal)]/10 text-[var(--accent-teal)]'
+                      : 'text-[var(--text-primary)] hover:bg-[var(--border)]'
+                  }`}
+                >
+                  <Flag country={l.flag} className="w-7 h-5 shadow-sm ring-1 ring-black/30" />
+                  <span>{l.label}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +110,7 @@ export default function Nav() {
   };
 
   const switchLocale = (locale: string) => {
-    router.push(router.asPath, router.asPath, { locale });
+    router.push(router.asPath, router.asPath, { locale, scroll: false });
   };
 
   return (
@@ -69,21 +148,7 @@ export default function Nav() {
           {/* Right side: locale switcher + contact */}
           <div className="hidden lg:flex items-center gap-3">
             {/* Locale Switcher */}
-            <div className="flex items-center gap-1 bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg p-1">
-              <Globe size={14} className="text-[var(--text-muted)] ml-1" />
-              <button
-                onClick={() => switchLocale('fr')}
-                className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition-all ${router.locale === 'fr' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}`}
-              >
-                <Flag country="fr" className="w-4 h-3" /> FR
-              </button>
-              <button
-                onClick={() => switchLocale('en')}
-                className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold transition-all ${router.locale === 'en' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'}`}
-              >
-                <Flag country="gb" className="w-4 h-3" /> EN
-              </button>
-            </div>
+            <LocaleSelector current={router.locale ?? 'fr'} onSelect={switchLocale} />
             <Link href="/contact" className="btn-primary text-sm py-2 px-5">
               {t.nav.contact}
             </Link>
@@ -91,16 +156,7 @@ export default function Nav() {
 
           {/* Mobile menu button */}
           <div className="flex lg:hidden items-center gap-2">
-            <div className="flex items-center gap-1 bg-[var(--bg-elevated)] border border-[var(--border)] rounded-lg p-1">
-              <button onClick={() => switchLocale('fr')}
-                className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-bold ${router.locale === 'fr' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)]'}`}>
-                <Flag country="fr" className="w-4 h-3" /> FR
-              </button>
-              <button onClick={() => switchLocale('en')}
-                className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-bold ${router.locale === 'en' ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)]' : 'text-[var(--text-muted)]'}`}>
-                <Flag country="gb" className="w-4 h-3" /> EN
-              </button>
-            </div>
+            <LocaleSelector current={router.locale ?? 'fr'} onSelect={switchLocale} />
             <button onClick={() => setIsOpen(!isOpen)} className="p-2 rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-elevated)] transition-colors">
               {isOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
