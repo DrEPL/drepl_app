@@ -221,7 +221,9 @@ export default function Home({ projects }: HomeProps) {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.slice(0, 3).map((project, index) => (
+            {projects.slice(0, 3).map((project, index) => {
+              const hasImage = !!project.imageUrl && project.imageUrl !== '/file.svg';
+              return (
               <motion.div
                 key={project.id}
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -230,11 +232,26 @@ export default function Home({ projects }: HomeProps) {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="group glass-dark rounded-2xl overflow-hidden border border-[var(--border)] hover:border-[var(--accent-teal)] transition-all flex flex-col h-full"
               >
-                <div className="relative h-48 w-full bg-[var(--bg-elevated)] flex items-center justify-center p-6 border-b border-[var(--border)] overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent-teal)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
-                  {project.category === 'IA' ? <BrainCircuit size={64} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" /> :
-                   project.category === 'Big Data' ? <Database size={64} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" /> :
-                   <Code size={64} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" />}
+                <div className="relative h-48 w-full bg-[var(--bg-elevated)] border-b border-[var(--border)] overflow-hidden">
+                  {hasImage ? (
+                    <>
+                      <Image
+                        src={project.imageUrl!}
+                        alt={project.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-deep)]/80 via-[var(--bg-deep)]/20 to-transparent" />
+                    </>
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center p-6">
+                      <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent-teal)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
+                      {project.category === 'IA' ? <BrainCircuit size={64} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" /> :
+                       project.category === 'Big Data' ? <Database size={64} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" /> :
+                       <Code size={64} className="text-[var(--text-secondary)] opacity-50 group-hover:scale-110 group-hover:text-[var(--accent-teal)] transition-all z-10" />}
+                    </div>
+                  )}
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
                   <span className="text-xs font-code text-[var(--accent-teal)] mb-2 px-2 py-1 bg-[var(--accent-teal)]/10 rounded-md self-start">{project.category}</span>
@@ -246,7 +263,8 @@ export default function Home({ projects }: HomeProps) {
                   </Link>
                 </div>
               </motion.div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="text-center mt-8 md:hidden">
