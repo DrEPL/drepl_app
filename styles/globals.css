@@ -83,7 +83,9 @@ code, pre {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
+  /* accent-teal-dark */
 }
+
 
 /* ─── Selection ────────────────────────────────────────────────── */
 ::selection {

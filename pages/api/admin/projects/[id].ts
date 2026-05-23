@@ -1,9 +1,25 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { isAuthenticated } from '@/lib/auth';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin, PROJECT_FIELDS } from '@/lib/supabase';
+
+function pickUpdatePayload(body: Record<string, unknown>) {
+  const payload: Record<string, unknown> = {};
+  for (const field of PROJECT_FIELDS) {
+    if (field in body) {
+      const value = body[field];
+      // Coerce empty string to null for nullable scalar fields
+      if (value === '' && field !== 'slug' && field !== 'title' && field !== 'category') {
+        payload[field] = null;
+      } else {
+        payload[field] = value;
+      }
+    }
+  }
+  return payload;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  
+
   if (!isAuthenticated(req)) return res.status(401).json({ error: 'Non autorisé' });
 
   const { id } = req.query;
@@ -21,29 +37,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'PUT') {
-    const body = req.body;
+    const body = req.body as Record<string, unknown>;
+
+    const payload = pickUpdatePayload(body);
 
     const { data, error } = await supabaseAdmin
       .from('projects')
-      .update({
-        slug: body.slug,
-        title: body.title,
-        short_description: body.short_description,
-        problem: body.problem,
-        solution: body.solution,
-        results: body.results,
-        category: body.category,
-        technologies: body.technologies,
-        categorized_technologies: body.categorized_technologies,
-        image_url: body.image_url,
-        logo_url: body.logo_url || null,
-        github_url: body.github_url || null,
-        demo_url: body.demo_url || null,
-        developed_at: body.developed_at || null,
-        screenshots: body.screenshots,
-        is_private_repo: body.is_private_repo,
-        display_order: body.display_order,
-      })
+      .update(payload)
       .eq('id', id)
       .select()
       .single();

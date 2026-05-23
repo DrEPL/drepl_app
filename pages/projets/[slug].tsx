@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { GetStaticPaths, GetStaticProps } from 'next';
-import { supabase, rowToProject } from '@/lib/supabase';
+import { supabase, rowToProject, pickLocale } from '@/lib/supabase';
 import type { Project } from '@/data/projects';
-import { ArrowLeft, ArrowUpRight, CheckCircle, Code2, Cpu, Github, LayoutGrid, Lightbulb, Lock, X } from 'lucide-react';
+import {
+  ArrowLeft, ArrowUpRight, Code2, Github, LayoutGrid, Lock, X,
+  Users, TrendingUp, ExternalLink,
+  ChevronLeft, ChevronRight, Maximize2,
+} from 'lucide-react';
+import {
+  ContextIcon, ProblemIcon, SolutionIcon, ResultsIcon,
+  PipelineIcon, TeamIcon, AdaptationsIcon,
+} from '@/components/SectionIcons';
 import { useT } from '@/lib/useTranslation';
+import { useRouter } from 'next/router';
 
 interface ProjectDetailProps { project: Project }
 
@@ -25,9 +34,68 @@ export const getStaticProps: GetStaticProps<ProjectDetailProps> = async ({ param
   return { props: { project: rowToProject(data, locale) }, revalidate: 60 };
 };
 
+const KPI_ACCENTS = [
+  {
+    text: 'text-[var(--accent-teal)]',
+    border: 'border-[var(--accent-teal)]/20',
+    bg: 'bg-gradient-to-br from-[var(--accent-teal)]/[0.08] to-transparent',
+    glow: 'bg-[var(--accent-teal)]/20',
+  },
+  {
+    text: 'text-[var(--accent-blue)]',
+    border: 'border-[var(--accent-blue)]/20',
+    bg: 'bg-gradient-to-br from-[var(--accent-blue)]/[0.08] to-transparent',
+    glow: 'bg-[var(--accent-blue)]/20',
+  },
+  {
+    text: 'text-violet-400',
+    border: 'border-violet-400/20',
+    bg: 'bg-gradient-to-br from-violet-400/[0.08] to-transparent',
+    glow: 'bg-violet-400/20',
+  },
+  {
+    text: 'text-amber-400',
+    border: 'border-amber-400/20',
+    bg: 'bg-gradient-to-br from-amber-400/[0.08] to-transparent',
+    glow: 'bg-amber-400/20',
+  },
+];
+
 export default function ProjectDetail({ project }: ProjectDetailProps) {
   const t = useT();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const router = useRouter();
+  const locale = router.locale ?? 'fr';
+  const screenshots = project.screenshots ?? [];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  const hasScreenshots = screenshots.length > 0;
+  const hasMultiple = screenshots.length > 1;
+
+  const goPrev = useCallback(() => {
+    setCurrentIndex(i => (i === 0 ? screenshots.length - 1 : i - 1));
+  }, [screenshots.length]);
+
+  const goNext = useCallback(() => {
+    setCurrentIndex(i => (i === screenshots.length - 1 ? 0 : i + 1));
+  }, [screenshots.length]);
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightboxOpen(false);
+      else if (e.key === 'ArrowLeft' && hasMultiple) goPrev();
+      else if (e.key === 'ArrowRight' && hasMultiple) goNext();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [lightboxOpen, hasMultiple, goPrev, goNext]);
+
+  const hasKpis = (project.kpiStats?.length ?? 0) > 0;
+  const hasPipeline = (project.pipelineSteps?.length ?? 0) > 0;
+  const hasTeam = (project.teamMembers?.length ?? 0) > 0;
+
+  const sortedPipeline = (project.pipelineSteps ?? []).slice().sort((a, b) => a.order - b.order);
 
   return (
     <>
@@ -41,6 +109,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
           <ArrowLeft size={16} /> {t.project_detail.back}
         </Link>
 
+        {/* HERO */}
         <div className="glass-dark border border-[var(--border)] rounded-3xl p-8 lg:p-12 mb-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-br from-[var(--accent-teal)]/5 to-transparent pointer-events-none" />
           <div className="relative z-10 flex flex-col lg:flex-row gap-12">
@@ -50,9 +119,13 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                   {project.category}
                 </span>
                 {project.developedAt && (
-                  <span className="inline-block text-xs font-medium text-[var(--accent-blue)] px-3 py-1 bg-[var(--accent-blue)]/10 rounded-md border border-[var(--accent-blue)]/20">
-                    {t.project_detail.developed_at} {project.developedAt}
-                  </span>
+                  <HostBadge
+                    name={project.developedAt}
+                    url={project.developedAtUrl}
+                    logo={project.developedAtLogo}
+                    role={project.developedAtRole}
+                    label={t.project_detail.developed_at}
+                  />
                 )}
               </div>
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-heading font-extrabold mb-6 leading-tight">{project.title}</h1>
@@ -75,43 +148,86 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
                 )}
               </div>
             </div>
-            <div className="lg:w-1/3 bg-[var(--bg-deep)] rounded-2xl p-6 border border-[var(--border)] self-start">
-              <h3 className="font-heading font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                <Code2 size={20} className="text-[var(--accent-teal)]" /> {t.project_detail.tech_stack}
+            <div className="lg:w-1/3 bg-[var(--bg-deep)] rounded-2xl border border-[var(--border)] self-start lg:h-[440px] flex flex-col overflow-hidden">
+              <h3 className="flex-shrink-0 px-6 pt-6 pb-3 font-heading font-semibold text-[var(--text-primary)] flex items-center gap-2 border-b border-[var(--border)]">
+                <Code2 size={18} className="text-[var(--accent-teal)]" /> {t.project_detail.tech_stack}
               </h3>
-              {project.categorizedTechnologies && project.categorizedTechnologies.length > 0 ? (
-                <div className="space-y-4">
-                  {project.categorizedTechnologies.map((cat, idx) => (
-                    <div key={idx}>
-                      <h4 className="text-xs uppercase tracking-wider text-[var(--text-muted)] font-semibold mb-2">{cat.category}</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {cat.skills.map(tech => (
-                          <span key={tech} className="text-sm text-[var(--text-secondary)] px-2.5 py-1 border border-[var(--border)] rounded-md bg-[var(--bg-surface)]">
-                            {tech}
-                          </span>
-                        ))}
+              <div className="flex-1 overflow-y-auto px-6 py-4">
+                {project.categorizedTechnologies && project.categorizedTechnologies.length > 0 ? (
+                  <div className="space-y-3">
+                    {project.categorizedTechnologies.map((cat, idx) => (
+                      <div key={idx}>
+                        <h4 className="text-[10px] uppercase tracking-wider text-[var(--text-muted)] font-semibold mb-1.5">{cat.category}</h4>
+                        <div className="flex flex-wrap gap-1.5">
+                          {cat.skills.map(tech => (
+                            <span key={tech} className="text-xs text-[var(--text-secondary)] px-2 py-0.5 border border-[var(--border)] rounded bg-[var(--bg-surface)]">
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.map(tech => (
-                    <span key={tech} className="text-sm text-[var(--text-secondary)] px-3 py-1.5 border border-[var(--border)] rounded-lg bg-[var(--bg-surface)]">
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              )}
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.technologies.map(tech => (
+                      <span key={tech} className="text-xs text-[var(--text-secondary)] px-2 py-1 border border-[var(--border)] rounded bg-[var(--bg-surface)]">
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        {/* KPI BANNER */}
+        {hasKpis && (
+          <section className="mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {project.kpiStats!.map((stat, idx) => {
+                const accent = KPI_ACCENTS[idx % KPI_ACCENTS.length];
+                return (
+                  <div
+                    key={idx}
+                    className={`relative overflow-hidden rounded-2xl p-6 text-center border ${accent.border} ${accent.bg} transition-transform hover:-translate-y-0.5`}
+                  >
+                    <div className={`absolute -top-8 -right-8 w-24 h-24 rounded-full blur-2xl ${accent.glow}`} />
+                    <div className={`relative flex justify-center mb-3 ${accent.text}`}>
+                      <TrendingUp size={24} />
+                    </div>
+                    <div className={`relative text-4xl md:text-5xl font-heading font-extrabold mb-2 ${accent.text}`}>
+                      {stat.value}
+                    </div>
+                    <p className="relative text-sm text-[var(--text-secondary)] leading-snug">
+                      {pickLocale(stat.label, locale)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
+        {/* CONTEXT */}
+        {project.context && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
+              <ContextIcon className="text-[var(--accent-teal)]" size={24} /> {t.project_detail.context_title}
+            </h2>
+            <p className="text-lg leading-relaxed bg-[var(--bg-surface)] p-6 rounded-2xl border-l-4 border-[var(--accent-teal)] text-[var(--text-secondary)]">
+              {project.context}
+            </p>
+          </section>
+        )}
+
+        {/* MAIN GRID: prose blocks + screenshots sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
           <div className="lg:col-span-2 space-y-12">
             <section>
               <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
-                <Lightbulb className="text-amber-500" size={24} /> {t.project_detail.problem_title}
+                <ProblemIcon className="text-amber-500" size={24} /> {t.project_detail.problem_title}
               </h2>
               <p className="text-lg leading-relaxed bg-[var(--bg-surface)] p-6 rounded-2xl border-l-4 border-amber-500 text-[var(--text-secondary)]">
                 {project.problem}
@@ -119,7 +235,7 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
             </section>
             <section>
               <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
-                <Cpu className="text-[var(--accent-blue)]" size={24} /> {t.project_detail.solution_title}
+                <SolutionIcon className="text-[var(--accent-blue)]" size={24} /> {t.project_detail.solution_title}
               </h2>
               <p className="text-lg leading-relaxed bg-[var(--bg-surface)] p-6 rounded-2xl border-l-4 border-[var(--accent-blue)] text-[var(--text-secondary)]">
                 {project.solution}
@@ -127,35 +243,101 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
             </section>
             <section>
               <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
-                <CheckCircle className="text-[var(--accent-teal)]" size={24} /> {t.project_detail.results_title}
+                <ResultsIcon className="text-[var(--accent-teal)]" size={24} /> {t.project_detail.results_title}
               </h2>
               <p className="text-lg leading-relaxed bg-[var(--accent-teal)]/5 p-6 rounded-2xl border border-[var(--accent-teal)]/20 text-[var(--text-primary)]">
                 {project.results}
               </p>
             </section>
           </div>
-          <div className="lg:col-span-1 space-y-8">
-            {project.screenshots && project.screenshots.length > 0 ? (
-              <div className="flex flex-col gap-6">
-                {project.screenshots.map((screenshot, index) => (
-                  <div
-                    key={index}
-                    className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-deep)] transition-all hover:border-[var(--accent-teal)]/50"
-                    onClick={() => setSelectedImage(screenshot.url)}
-                  >
-                    <div className="relative aspect-video w-full overflow-hidden">
-                      <Image src={screenshot.url} alt={screenshot.title} fill sizes="(max-width: 1024px) 100vw, 33vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105" />
+          <div className="lg:col-span-1">
+            {hasScreenshots ? (
+              <div className="lg:sticky lg:top-24 glass-dark border border-[var(--border)] rounded-2xl overflow-hidden">
+                {/* Featured image */}
+                <div
+                  className="group relative aspect-video w-full overflow-hidden bg-[var(--bg-deep)] cursor-zoom-in"
+                  onClick={() => setLightboxOpen(true)}
+                >
+                  {screenshots.map((s, idx) => (
+                    <Image
+                      key={idx}
+                      src={s.url}
+                      alt={s.title}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 33vw"
+                      priority={idx === 0}
+                      className={`object-cover transition-opacity duration-300 ${idx === currentIndex ? 'opacity-100' : 'opacity-0'}`}
+                    />
+                  ))}
+                  {/* Counter */}
+                  {hasMultiple && (
+                    <div className="absolute top-3 right-3 text-xs font-code text-white bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full pointer-events-none">
+                      {currentIndex + 1} / {screenshots.length}
                     </div>
-                    <div className="p-4 border-t border-[var(--border)]">
-                      <h4 className="font-heading font-semibold text-sm mb-1 text-[var(--text-primary)]">{screenshot.title}</h4>
-                      <p className="text-xs text-[var(--text-muted)] leading-relaxed">{screenshot.description}</p>
+                  )}
+                  {/* Zoom hint */}
+                  <div className="absolute bottom-3 right-3 p-2 rounded-full bg-black/60 backdrop-blur-sm text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    <Maximize2 size={16} />
+                  </div>
+                  {/* Prev / Next arrows */}
+                  {hasMultiple && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-[var(--accent-teal)] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        aria-label={t.project_detail.screenshot_prev}
+                      >
+                        <ChevronLeft size={20} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); goNext(); }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-[var(--accent-teal)] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        aria-label={t.project_detail.screenshot_next}
+                      >
+                        <ChevronRight size={20} />
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {/* Caption */}
+                <div className="px-4 py-3 border-t border-[var(--border)] min-h-[72px]">
+                  <h4 className="font-heading font-semibold text-sm mb-1 text-[var(--text-primary)] line-clamp-1">
+                    {screenshots[currentIndex].title}
+                  </h4>
+                  <p className="text-xs text-[var(--text-muted)] leading-relaxed line-clamp-2">
+                    {screenshots[currentIndex].description}
+                  </p>
+                </div>
+
+                {/* Thumbnail strip */}
+                {hasMultiple && (
+                  <div className="px-3 pb-3 pt-2 border-t border-[var(--border)] bg-[var(--bg-deep)]/40">
+                    <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
+                      {screenshots.map((s, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setCurrentIndex(idx)}
+                          className={`relative flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 snap-start transition-all ${
+                            idx === currentIndex
+                              ? 'border-[var(--accent-teal)] opacity-100 ring-2 ring-[var(--accent-teal)]/30'
+                              : 'border-transparent opacity-50 hover:opacity-100'
+                          }`}
+                          aria-label={`${t.project_detail.screenshot_view} ${idx + 1}`}
+                          aria-current={idx === currentIndex}
+                        >
+                          <Image src={s.url} alt={s.title} fill sizes="64px" className="object-cover" />
+                        </button>
+                      ))}
                     </div>
                   </div>
-                ))}
+                )}
               </div>
             ) : (
-              <div className="glass-dark border border-[var(--border)] rounded-2xl p-6 text-center">
+              <div className="glass-dark border border-[var(--border)] rounded-2xl p-6 text-center lg:sticky lg:top-24">
                 <LayoutGrid className="mx-auto text-[var(--text-muted)] mb-4" size={48} />
                 <h4 className="font-heading font-semibold mb-2">{t.project_detail.no_screenshot_title}</h4>
                 <p className="text-sm text-[var(--text-muted)]">{t.project_detail.no_screenshot_desc}</p>
@@ -163,19 +345,174 @@ export default function ProjectDetail({ project }: ProjectDetailProps) {
             )}
           </div>
         </div>
+
+        {/* PIPELINE */}
+        {hasPipeline && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-heading font-bold mb-6 flex items-center gap-3">
+              <PipelineIcon className="text-violet-400" size={24} /> {t.project_detail.pipeline_title}
+            </h2>
+            <ol className="relative ml-4 space-y-6">
+              {/* Gradient connector line */}
+              <span
+                aria-hidden
+                className="absolute left-0 top-2 bottom-2 w-px bg-gradient-to-b from-[var(--accent-teal)] via-violet-400 to-[var(--accent-blue)] opacity-50"
+              />
+              {sortedPipeline.map((step) => (
+                <li key={step.order} className="ml-8 relative">
+                  <span className="absolute -left-12 flex items-center justify-center w-8 h-8 bg-[var(--accent-teal)] text-[var(--bg-deep)] font-heading font-bold rounded-full text-sm shadow-lg shadow-[var(--accent-teal)]/20 ring-4 ring-[var(--bg-deep)]">
+                    {step.order}
+                  </span>
+                  <div className="glass-dark border border-[var(--border)] rounded-xl p-5 hover:border-[var(--accent-teal)]/30 transition-colors">
+                    <h3 className="font-heading font-semibold text-[var(--text-primary)] mb-2">{pickLocale(step.title, locale)}</h3>
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{pickLocale(step.description, locale)}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+
+        {/* TEAM */}
+        {hasTeam && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-heading font-bold mb-6 flex items-center gap-3">
+              <TeamIcon className="text-amber-400" size={24} /> {t.project_detail.team_title}
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {project.teamMembers!.map((member, idx) => (
+                <div key={idx} className="glass-dark border border-[var(--border)] rounded-2xl p-5 text-center">
+                  <div className="relative w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden bg-[var(--bg-deep)] border border-[var(--border)]">
+                    {member.avatar_url ? (
+                      <Image src={member.avatar_url} alt={member.name} fill sizes="64px" className="object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[var(--text-muted)]">
+                        <Users size={24} />
+                      </div>
+                    )}
+                  </div>
+                  <h3 className="font-heading font-semibold text-sm text-[var(--text-primary)] mb-1">{member.name}</h3>
+                  <p className="text-xs text-[var(--text-muted)]">{pickLocale(member.role, locale)}</p>
+                  {member.is_lead && (
+                    <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded-full bg-[var(--accent-teal)]/10 text-[var(--accent-teal)] border border-[var(--accent-teal)]/20">
+                      {t.project_detail.team_lead_badge}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ADAPTATIONS / TRANSPOSABILITÉ */}
+        {project.closingNote && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-heading font-bold mb-4 flex items-center gap-3">
+              <AdaptationsIcon className="text-[var(--accent-blue)]" size={24} /> {t.project_detail.adaptations_title}
+            </h2>
+            <div className="relative overflow-hidden rounded-2xl border border-[var(--accent-blue)]/20 bg-gradient-to-br from-[var(--accent-blue)]/[0.06] via-[var(--accent-teal)]/[0.04] to-transparent p-6 md:p-8">
+              <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-[var(--accent-blue)]/10 blur-3xl pointer-events-none" />
+              <p className="relative text-lg leading-relaxed text-[var(--text-primary)]">
+                {project.closingNote}
+              </p>
+            </div>
+          </section>
+        )}
       </div>
 
-      {selectedImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" onClick={() => setSelectedImage(null)}>
-          <button className="absolute top-6 right-6 text-white hover:text-[var(--accent-teal)] transition-colors p-2 rounded-full bg-white/10"
-            onClick={e => { e.stopPropagation(); setSelectedImage(null); }}>
+      {lightboxOpen && hasScreenshots && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-sm p-4 sm:p-8"
+          onClick={() => setLightboxOpen(false)}
+        >
+          {/* Close */}
+          <button
+            type="button"
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 text-white hover:text-[var(--accent-teal)] transition-colors p-2 rounded-full bg-white/10 hover:bg-white/20 z-10"
+            onClick={e => { e.stopPropagation(); setLightboxOpen(false); }}
+            aria-label="Close"
+          >
             <X size={24} />
           </button>
-          <div className="relative w-full max-w-5xl aspect-video rounded-xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
-            <Image src={selectedImage} alt="Vue agrandie" fill sizes="100vw" className="object-contain" />
+
+          {/* Counter */}
+          {hasMultiple && (
+            <div className="absolute top-4 left-4 sm:top-6 sm:left-6 text-sm font-code text-white bg-white/10 px-3 py-1.5 rounded-full">
+              {currentIndex + 1} / {screenshots.length}
+            </div>
+          )}
+
+          {/* Prev / Next */}
+          {hasMultiple && (
+            <>
+              <button
+                type="button"
+                onClick={e => { e.stopPropagation(); goPrev(); }}
+                className="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-[var(--accent-teal)] transition-colors z-10"
+                aria-label={t.project_detail.screenshot_prev}
+              >
+                <ChevronLeft size={28} />
+              </button>
+              <button
+                type="button"
+                onClick={e => { e.stopPropagation(); goNext(); }}
+                className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 backdrop-blur-sm text-white hover:bg-[var(--accent-teal)] transition-colors z-10"
+                aria-label={t.project_detail.screenshot_next}
+              >
+                <ChevronRight size={28} />
+              </button>
+            </>
+          )}
+
+          {/* Main image */}
+          <div className="relative w-full max-w-6xl aspect-video rounded-xl overflow-hidden shadow-2xl" onClick={e => e.stopPropagation()}>
+            <Image
+              src={screenshots[currentIndex].url}
+              alt={screenshots[currentIndex].title}
+              fill
+              sizes="100vw"
+              className="object-contain"
+            />
+          </div>
+
+          {/* Caption */}
+          <div className="mt-4 max-w-3xl text-center px-4" onClick={e => e.stopPropagation()}>
+            <h4 className="font-heading font-semibold text-white mb-1">{screenshots[currentIndex].title}</h4>
+            <p className="text-sm text-white/70 leading-relaxed">{screenshots[currentIndex].description}</p>
           </div>
         </div>
       )}
     </>
   );
+}
+
+// Compact badge displaying the host organization in the hero, optionally clickable and with a logo.
+function HostBadge({
+  name, url, logo, role, label,
+}: {
+  name: string;
+  url?: string | null;
+  logo?: string | null;
+  role?: string | null;
+  label: string;
+}) {
+  const inner = (
+    <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--accent-blue)] px-3 py-1 bg-[var(--accent-blue)]/10 rounded-md border border-[var(--accent-blue)]/20">
+      {logo && (
+        <span className="relative w-4 h-4 rounded overflow-hidden">
+          <Image src={logo} alt={name} fill sizes="16px" className="object-contain" />
+        </span>
+      )}
+      <span>{label} {name}{role ? ` — ${role}` : ''}</span>
+      {url && <ExternalLink size={12} className="opacity-60" />}
+    </span>
+  );
+  if (url) {
+    return (
+      <a href={url} target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+        {inner}
+      </a>
+    );
+  }
+  return inner;
 }

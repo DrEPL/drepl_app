@@ -3,6 +3,11 @@ import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { Save, X, Plus, Upload, Trash2, ImageIcon } from 'lucide-react';
 import type { ProjectRow } from '@/lib/supabase';
+import {
+  KpiStatsEditor,
+  TeamMembersEditor,
+  PipelineStepsEditor,
+} from '@/components/admin/JsonbEditors';
 
 type ProjectFormData = Omit<ProjectRow, 'id' | 'created_at' | 'updated_at'>;
 
@@ -18,6 +23,15 @@ const emptyForm: ProjectFormData = {
   image_url: '/file.svg', logo_url: null, github_url: null, demo_url: null,
   developed_at: null, screenshots: [], is_private_repo: false, display_order: 0,
   title_en: null, short_description_en: null, problem_en: null, solution_en: null, results_en: null,
+  // Nouveaux champs prose
+  context: null, context_en: null,
+  closing_note: null, closing_note_en: null,
+  // Structure d'accueil enrichie
+  developed_at_url: null, developed_at_logo: null,
+  developed_at_role: null, developed_at_role_en: null,
+  developed_at_description: null, developed_at_description_en: null,
+  // Metadonnees structurees
+  kpi_stats: [], team_members: [], pipeline_steps: [],
 };
 
 // ── Upload helper ─────────────────────────────────────────────
@@ -175,18 +189,13 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Props)
           <textarea className={`${inputClass} resize-none`} rows={2} value={form.short_description || ''}
             onChange={e => set('short_description', e.target.value)} />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
             <label className={labelClass}>Catégorie *</label>
             <select className={inputClass} value={form.category}
               onChange={e => set('category', e.target.value as ProjectRow['category'])}>
               {['IA', 'Big Data', 'Web/Mobile', 'IoT'].map(c => <option key={c} value={c}>{c}</option>)}
             </select>
-          </div>
-          <div>
-            <label className={labelClass}>Développé chez</label>
-            <input type="text" className={inputClass} value={form.developed_at || ''}
-              onChange={e => set('developed_at', e.target.value || null)} placeholder="Ex: DiCentre4AI" />
           </div>
           <div>
             <label className={labelClass}>Ordre d&apos;affichage</label>
@@ -200,18 +209,62 @@ export default function ProjectForm({ initialData, onSubmit, isLoading }: Props)
       <section className="glass-dark border border-[var(--border)] rounded-2xl p-6 space-y-5">
         <h2 className="font-heading font-semibold text-[var(--text-primary)] text-lg">Contenu détaillé</h2>
         {[
+          { label: 'Contexte & Objectifs (intro avant la problématique)', field: 'context' },
           { label: 'La Problématique', field: 'problem' },
           { label: 'La Solution', field: 'solution' },
           { label: 'Résultats & Impact', field: 'results' },
+          { label: 'Adaptations possibles (comment ce projet se transpose à d\'autres contextes / domaines)', field: 'closing_note' },
         ].map(({ label, field }) => (
           <div key={field}>
             <label className={labelClass}>{label}</label>
             <textarea className={`${inputClass} resize-none`} rows={4}
               value={(form[field as keyof ProjectFormData] as string) || ''}
-              onChange={e => set(field as keyof ProjectFormData, e.target.value)} />
+              onChange={e => set(field as keyof ProjectFormData, e.target.value || null)} />
           </div>
         ))}
       </section>
+
+      {/* Structure d'accueil */}
+      <section className="glass-dark border border-[var(--border)] rounded-2xl p-6 space-y-5">
+        <h2 className="font-heading font-semibold text-[var(--text-primary)] text-lg">Structure d&apos;accueil</h2>
+        <p className="text-xs text-[var(--text-muted)] -mt-3">Organisation, école ou entreprise où le projet a été réalisé. Laisser vide pour un projet personnel.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div>
+            <label className={labelClass}>Nom de la structure</label>
+            <input type="text" className={inputClass} value={form.developed_at || ''}
+              onChange={e => set('developed_at', e.target.value || null)} placeholder="Ex: DiCentre4AI, ESP-UCAD" />
+          </div>
+          <div>
+            <label className={labelClass}>URL du site</label>
+            <input type="url" className={inputClass} value={form.developed_at_url || ''}
+              onChange={e => set('developed_at_url', e.target.value || null)} placeholder="https://..." />
+          </div>
+          <div>
+            <label className={labelClass}>Rôle / type d&apos;engagement</label>
+            <input type="text" className={inputClass} value={form.developed_at_role || ''}
+              onChange={e => set('developed_at_role', e.target.value || null)} placeholder="Ex: Stage, Projet académique" />
+          </div>
+          <div>
+            <ImageUpload label="Logo de la structure" value={form.developed_at_logo}
+              onChange={url => set('developed_at_logo', url)} />
+          </div>
+        </div>
+        <div>
+          <label className={labelClass}>Description (rôle de la structure dans le projet)</label>
+          <textarea className={`${inputClass} resize-none`} rows={2}
+            value={form.developed_at_description || ''}
+            onChange={e => set('developed_at_description', e.target.value || null)} />
+        </div>
+      </section>
+
+      {/* Chiffres clés */}
+      <KpiStatsEditor value={form.kpi_stats} onChange={v => set('kpi_stats', v)} />
+
+      {/* Pipeline */}
+      <PipelineStepsEditor value={form.pipeline_steps} onChange={v => set('pipeline_steps', v)} />
+
+      {/* Équipe */}
+      <TeamMembersEditor value={form.team_members} onChange={v => set('team_members', v)} />
 
       {/* Technologies */}
       <section className="glass-dark border border-[var(--border)] rounded-2xl p-6 space-y-5">

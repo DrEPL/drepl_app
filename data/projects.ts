@@ -1,3 +1,9 @@
+import type {
+  KpiStat,
+  TeamMember,
+  PipelineStep,
+} from '@/lib/supabase';
+
 export interface Project {
   id: string;
   slug: string;
@@ -16,6 +22,18 @@ export interface Project {
   screenshots?: { url: string; title: string; description: string }[] | null;
   categorizedTechnologies?: { category: string; skills: string[] }[] | null;
   isPrivateRepo?: boolean | null;
+  // Champs prose enrichis (déjà localisés par rowToProject)
+  context?: string | null;
+  closingNote?: string | null;
+  // Structure d'accueil enrichie
+  developedAtUrl?: string | null;
+  developedAtLogo?: string | null;
+  developedAtRole?: string | null;
+  developedAtDescription?: string | null;
+  // Metadonnees structurees (chaque leaf {fr,en} doit etre passe a pickLocale)
+  kpiStats?: KpiStat[];
+  teamMembers?: TeamMember[];
+  pipelineSteps?: PipelineStep[];
 }
 
 export const projects: Project[] = [

@@ -1,9 +1,43 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { isAuthenticated } from '@/lib/auth';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin, PROJECT_FIELDS } from '@/lib/supabase';
+
+// Defaults for fields that should not be null when omitted from the body.
+const INSERT_DEFAULTS: Record<string, unknown> = {
+  short_description: '',
+  problem: '',
+  solution: '',
+  results: '',
+  technologies: [],
+  categorized_technologies: [],
+  image_url: '/file.svg',
+  screenshots: [],
+  is_private_repo: false,
+  display_order: 0,
+  key_features: [],
+  kpi_stats: [],
+  team_members: [],
+  architecture_components: [],
+  pipeline_steps: [],
+  api_endpoints: [],
+};
+
+function pickInsertPayload(body: Record<string, unknown>) {
+  const payload: Record<string, unknown> = {};
+  for (const field of PROJECT_FIELDS) {
+    if (body[field] !== undefined && body[field] !== null && body[field] !== '') {
+      payload[field] = body[field];
+    } else if (field in INSERT_DEFAULTS) {
+      payload[field] = INSERT_DEFAULTS[field];
+    } else {
+      payload[field] = null;
+    }
+  }
+  return payload;
+}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  
+
   if (!isAuthenticated(req)) return res.status(401).json({ error: 'Non autorisé' });
 
   if (req.method === 'GET') {
@@ -17,34 +51,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'POST') {
-    const body = req.body;
+    const body = req.body as Record<string, unknown>;
 
-    // Valider les champs obligatoires
     if (!body.slug || !body.title || !body.category) {
       return res.status(400).json({ error: 'slug, title et category sont obligatoires' });
     }
 
+    const payload = pickInsertPayload(body);
+
     const { data, error } = await supabaseAdmin
       .from('projects')
-      .insert([{
-        slug: body.slug,
-        title: body.title,
-        short_description: body.short_description || '',
-        problem: body.problem || '',
-        solution: body.solution || '',
-        results: body.results || '',
-        category: body.category,
-        technologies: body.technologies || [],
-        categorized_technologies: body.categorized_technologies || [],
-        image_url: body.image_url || '/file.svg',
-        logo_url: body.logo_url || null,
-        github_url: body.github_url || null,
-        demo_url: body.demo_url || null,
-        developed_at: body.developed_at || null,
-        screenshots: body.screenshots || [],
-        is_private_repo: body.is_private_repo || false,
-        display_order: body.display_order || 0,
-      }])
+      .insert([payload])
       .select()
       .single();
 

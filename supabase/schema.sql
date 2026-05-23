@@ -32,7 +32,29 @@ CREATE TABLE IF NOT EXISTS projects (
   is_private_repo BOOLEAN  DEFAULT false,
   display_order INTEGER    DEFAULT 0,
   created_at   TIMESTAMPTZ DEFAULT NOW(),
-  updated_at   TIMESTAMPTZ DEFAULT NOW()
+  updated_at   TIMESTAMPTZ DEFAULT NOW(),
+  -- i18n EN
+  title_en              TEXT,
+  short_description_en  TEXT,
+  problem_en            TEXT,
+  solution_en           TEXT,
+  results_en            TEXT,
+  -- Nouveaux champs prose (FR + EN)
+  context               TEXT,
+  context_en            TEXT,
+  closing_note          TEXT,
+  closing_note_en       TEXT,
+  -- Enrichissement "structure d'accueil"
+  developed_at_url            TEXT,
+  developed_at_logo           TEXT,
+  developed_at_role           TEXT,
+  developed_at_role_en        TEXT,
+  developed_at_description    TEXT,
+  developed_at_description_en TEXT,
+  -- Metadonnees structurees (JSONB avec i18n interne {fr, en})
+  kpi_stats      JSONB DEFAULT '[]', -- [{ value:string, label:{fr,en}, icon?:string }]
+  team_members   JSONB DEFAULT '[]', -- [{ name:string, role:{fr,en}, avatar_url?:string, is_lead?:boolean }]
+  pipeline_steps JSONB DEFAULT '[]'  -- [{ order:int, title:{fr,en}, description:{fr,en} }]
 );
 
 -- RLS : lecture publique, écriture via service role uniquement
