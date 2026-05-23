@@ -149,29 +149,7 @@ code, pre {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .grain-anim, .animate-organic, .hero-avatar-blob, .hero-avatar-orbit { animation: none; }
-}
-
-/* ─── Hero avatar — organic morphing blob + slow orbit ─────────── */
-@keyframes blob-morph {
-  0%, 100% { border-radius: 58% 42% 51% 49% / 47% 55% 45% 53%; transform: rotate(0deg) scale(1); }
-  33%      { border-radius: 42% 58% 60% 40% / 55% 45% 55% 45%; transform: rotate(120deg) scale(1.04); }
-  66%      { border-radius: 53% 47% 38% 62% / 60% 40% 60% 40%; transform: rotate(240deg) scale(0.97); }
-}
-
-.hero-avatar-blob {
-  border-radius: 58% 42% 51% 49% / 47% 55% 45% 53%;
-  animation: blob-morph 18s ease-in-out infinite;
-  will-change: transform, border-radius;
-}
-
-@keyframes orbit-spin {
-  to { transform: rotate(360deg); }
-}
-
-.hero-avatar-orbit {
-  animation: orbit-spin 40s linear infinite;
-  will-change: transform;
+  .grain-anim, .animate-organic { animation: none; }
 }
 
 /* ─── Utilities ────────────────────────────────────────────────── */

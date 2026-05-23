@@ -5,6 +5,7 @@ import { TypeAnimation } from 'react-type-animation';
 import { motion } from 'framer-motion';
 import { ArrowRight, BrainCircuit, Code, Database } from 'lucide-react';
 import ParticleCanvas from '@/components/ParticleCanvas';
+import HeroAvatar from '@/components/HeroAvatar';
 import type { GetStaticProps } from 'next';
 import { supabase, rowToProject } from '@/lib/supabase';
 import type { Project } from '@/data/projects';
@@ -109,20 +110,7 @@ export default function Home({ projects }: HomeProps) {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="w-full lg:w-2/5 flex justify-center lg:justify-end"
             >
-              <div className="relative w-64 h-64 sm:w-80 sm:h-80 xl:w-96 xl:h-96 group">
-                <div className="absolute inset-0 rounded-full animate-border-glow border-2 border-transparent" />
-                <div className="absolute -inset-4 rounded-full border border-dashed border-[var(--border-glass)] animate-spin-slow" />
-                <div className="w-full h-full rounded-full overflow-hidden border-4 border-[var(--bg-surface)] relative z-10">
-                  <Image
-                    src="/drepl.jpg"
-                    alt="Dr EPL"
-                    fill
-                    sizes="(max-width: 640px) 256px, (max-width: 1280px) 320px, 384px"
-                    priority
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                </div>
-              </div>
+              <HeroAvatar />
             </motion.div>
 
           </div>
