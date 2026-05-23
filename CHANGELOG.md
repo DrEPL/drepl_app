@@ -5,6 +5,11 @@ Tous les changements notables de ce projet sont documentés dans ce fichier.
 Le format est basé sur [Keep a Changelog 1.1.0](https://keepachangelog.com/fr/1.1.0/),
 et le projet suit le versioning [CalVer](https://calver.org/) au format `YYYY.M.PATCH`.
 
+## [2026.5.1] - 2026-05-24
+
+### Added
+- Tech marquee enrichi de 18 technologies extraites des projets existants : C++, PHP, scikit-learn, pandas, Jupyter, spaCy, Hugging Face, Ollama, Next.js, Flask, Laravel, Streamlit, Redux, Apache Spark, Apache Airflow, MLflow, Plotly, InfluxDB, Qdrant, MinIO, Nginx, Grafana, ESP32, MQTT, Node-RED. Sources d'icônes mixtes devicon CDN + simpleicons selon disponibilité.
+
 ## [2026.5.0] - 2026-05-23
 
 Première version documentée. Consolide l'ensemble du travail réalisé en mai 2026 :
