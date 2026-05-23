@@ -35,10 +35,10 @@ const CATEGORY_THEME: Record<string, {
   chipBg: string;
   Icon: React.ComponentType<{ size?: number; className?: string }>;
 }> = {
-  'IA':         { text: 'text-[var(--accent-blue)]',glow: 'bg-[var(--accent-blue)]/25',ring: 'group-hover:border-[var(--accent-blue)]/50', chipBg: 'bg-black/70 text-[var(--accent-blue)] border-[var(--accent-blue)]/40', Icon: BrainCircuit },
-  'Big Data':   { text: 'text-violet-300',          glow: 'bg-violet-400/25',         ring: 'group-hover:border-violet-300/50', chipBg: 'bg-black/70 text-violet-300 border-violet-300/40',           Icon: Database },
-  'Web/Mobile': { text: 'text-[var(--accent-teal)]',glow: 'bg-[var(--accent-teal)]/25',ring: 'group-hover:border-[var(--accent-teal)]/50', chipBg: 'bg-black/70 text-[var(--accent-teal)] border-[var(--accent-teal)]/40', Icon: Code },
-  'IoT':        { text: 'text-[var(--accent-blue)]',glow: 'bg-[var(--accent-blue)]/25',ring: 'group-hover:border-[var(--accent-blue)]/50', chipBg: 'bg-black/70 text-[var(--accent-blue)] border-[var(--accent-blue)]/40', Icon: Cpu },
+  'IA':         { text: 'text-[var(--accent-blue)]',glow: 'bg-[var(--accent-blue)]/25',ring: 'group-hover:border-[var(--accent-blue)]/50', chipBg: 'liquid-glass bg-[var(--accent-blue)]/25 text-[var(--accent-blue)] border-[var(--accent-blue)]/50', Icon: BrainCircuit },
+  'Big Data':   { text: 'text-violet-300',          glow: 'bg-violet-400/25',         ring: 'group-hover:border-violet-300/50', chipBg: 'liquid-glass bg-violet-400/25 text-violet-100 border-violet-300/50',                     Icon: Database },
+  'Web/Mobile': { text: 'text-[var(--accent-teal)]',glow: 'bg-[var(--accent-teal)]/25',ring: 'group-hover:border-[var(--accent-teal)]/50', chipBg: 'liquid-glass bg-[var(--accent-teal)]/25 text-[var(--accent-teal)] border-[var(--accent-teal)]/50', Icon: Code },
+  'IoT':        { text: 'text-[var(--accent-blue)]',glow: 'bg-[var(--accent-blue)]/25',ring: 'group-hover:border-[var(--accent-blue)]/50', chipBg: 'liquid-glass bg-[var(--accent-blue)]/25 text-[var(--accent-blue)] border-[var(--accent-blue)]/50', Icon: Cpu },
 };
 
 const themeFor = (cat: string) => CATEGORY_THEME[cat] ?? CATEGORY_THEME['Web/Mobile'];
@@ -132,16 +132,16 @@ export default function Portfolio({ projects }: Props) {
                   onClick={() => setActiveCategory(category)}
                   className={`group relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
                     isActive
-                      ? 'bg-[var(--accent-teal)] text-[var(--bg-deep)] shadow-lg shadow-[var(--accent-teal)]/20'
+                      ? 'liquid-glass liquid-glass-lg bg-[var(--accent-teal)]/85 text-[var(--bg-deep)] shadow-lg shadow-[var(--accent-teal)]/30'
                       : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-white/5'
                   }`}
                 >
                   <Icon size={15} className={isActive ? '' : (theme?.text ?? '')} />
                   <span>{category}</span>
-                  <span className={`text-[10px] font-code px-1.5 py-0.5 rounded-md ${
+                  <span className={`liquid-glass text-[10px] font-code px-1.5 py-0.5 rounded-md ${
                     isActive
-                      ? 'bg-[var(--bg-deep)]/20 text-[var(--bg-deep)]'
-                      : 'bg-[var(--bg-deep)]/60 text-[var(--text-muted)] border border-[var(--border)]'
+                      ? 'bg-[var(--bg-deep)]/30 text-[var(--bg-deep)]'
+                      : 'bg-white/8 text-[var(--text-muted)] border border-[var(--border)]'
                   }`}>
                     {count}
                   </span>
@@ -310,7 +310,7 @@ function ProjectCard({ project, isFeatured, discoverLabel, featuredLabel, index 
               {project.category}
             </span>
             {isFeatured && (
-              <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.18em] font-semibold text-[var(--accent-teal)] px-2.5 py-1 rounded-md bg-[var(--accent-teal)]/10 border border-[var(--accent-teal)]/30">
+              <span className="liquid-glass inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.18em] font-semibold text-[var(--accent-teal)] px-2.5 py-1 rounded-md bg-[var(--accent-teal)]/25 border border-[var(--accent-teal)]/50">
                 <Sparkles size={11} />
                 {featuredLabel}
               </span>
@@ -336,13 +336,13 @@ function ProjectCard({ project, isFeatured, discoverLabel, featuredLabel, index 
               {project.technologies.slice(0, isFeatured ? 6 : 3).map(tech => (
                 <span
                   key={tech}
-                  className="text-[10px] font-code text-[var(--text-muted)] px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--bg-deep)]/60"
+                  className="liquid-glass text-[10px] font-code text-[var(--text-muted)] px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--bg-deep)]/60"
                 >
                   {tech}
                 </span>
               ))}
               {project.technologies.length > (isFeatured ? 6 : 3) && (
-                <span className="text-[10px] font-code text-[var(--text-muted)] px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--bg-deep)]/60">
+                <span className="liquid-glass text-[10px] font-code text-[var(--text-muted)] px-2 py-0.5 rounded border border-[var(--border)] bg-[var(--bg-deep)]/60">
                   +{project.technologies.length - (isFeatured ? 6 : 3)}
                 </span>
               )}

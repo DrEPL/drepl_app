@@ -167,6 +167,59 @@ code, pre {
   border: 1px solid var(--border);
 }
 
+/* ─── Liquid Glass badge — iOS-style translucent orb ────────────
+   Drop on any badge/chip to add gloss, specular sheen and inner
+   highlights. Keeps the element's existing background as the tint
+   visible through the glass. Requires the element to have:
+   - position context (the class sets it)
+   - a border-radius (inherited by the pseudos)
+   - some translucent background (rgba or /alpha) for backdrop blur
+     to show through */
+.liquid-glass {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  backdrop-filter: blur(8px) saturate(160%);
+  -webkit-backdrop-filter: blur(8px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 1px 2px rgba(0, 0, 0, 0.20);
+}
+.liquid-glass::before,
+.liquid-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: -1;
+}
+/* Very subtle vertical gloss: faint highlight top, transparent mid, slight shade bottom */
+.liquid-glass::before {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.02) 55%,
+    rgba(0, 0, 0, 0.10) 100%
+  );
+}
+/* Tiny specular sheen — barely a glint */
+.liquid-glass::after {
+  background: radial-gradient(
+    ellipse 55% 35% at 28% 18%,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0) 75%
+  );
+}
+/* Larger variant — slightly more pronounced for big pill buttons */
+.liquid-glass-lg {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
 .tech-border {
   position: relative;
 }

@@ -17,7 +17,7 @@ export function TechChip({ name, delay = 0 }: Props) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay }}
       whileHover={{ y: -2, transition: { duration: 0.15 } }}
-      className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-md bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)]/40 hover:text-[var(--text-primary)] transition-colors cursor-default"
+      className="liquid-glass inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-md bg-[var(--bg-surface)]/60 border border-[var(--border)] text-[var(--text-secondary)] hover:border-[var(--text-secondary)]/50 hover:text-[var(--text-primary)] transition-colors cursor-default"
     >
       {icon ? (
         <svg

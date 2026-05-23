@@ -145,7 +145,7 @@ export default function ProjectDetail({ bilingual }: ProjectDetailProps) {
           <div className="relative z-10 flex flex-col lg:flex-row gap-12">
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-4">
-                <span className="inline-block text-xs font-code text-[var(--accent-teal)] px-3 py-1 bg-[var(--accent-teal)]/10 rounded-md border border-[var(--accent-teal)]/20">
+                <span className="liquid-glass inline-block text-xs font-code text-[var(--accent-teal)] px-3 py-1 bg-[var(--accent-teal)]/20 rounded-md border border-[var(--accent-teal)]/40">
                   {project.category}
                 </span>
                 {project.developedAt && (
@@ -467,7 +467,7 @@ export default function ProjectDetail({ bilingual }: ProjectDetailProps) {
                   <h3 className="font-heading font-semibold text-sm text-[var(--text-primary)] mb-1">{member.name}</h3>
                   <p className="text-xs text-[var(--text-muted)]">{pickLocale(member.role, locale)}</p>
                   {member.is_lead && (
-                    <span className="inline-block mt-2 text-xs px-2 py-0.5 rounded-full bg-[var(--accent-teal)]/10 text-[var(--accent-teal)] border border-[var(--accent-teal)]/20">
+                    <span className="liquid-glass inline-block mt-2 text-xs px-2 py-0.5 rounded-full bg-[var(--accent-teal)]/25 text-[var(--accent-teal)] border border-[var(--accent-teal)]/45">
                       {t.project_detail.team_lead_badge}
                     </span>
                   )}
@@ -604,7 +604,7 @@ function HostBadge({
   label: string;
 }) {
   const inner = (
-    <span className="inline-flex items-center gap-2 text-xs font-medium text-[var(--accent-blue)] px-3 py-1 bg-[var(--accent-blue)]/10 rounded-md border border-[var(--accent-blue)]/20">
+    <span className="liquid-glass inline-flex items-center gap-2 text-xs font-medium text-[var(--accent-blue)] px-3 py-1 bg-[var(--accent-blue)]/20 rounded-md border border-[var(--accent-blue)]/40">
       {logo && (
         <span className="relative w-4 h-4 rounded overflow-hidden">
           <Image src={logo} alt={name} fill sizes="16px" className="object-contain" />

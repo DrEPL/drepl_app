@@ -242,7 +242,7 @@ export default function Home({ projects }: HomeProps) {
                   )}
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
-                  <span className="text-xs font-code text-[var(--accent-teal)] mb-2 px-2 py-1 bg-[var(--accent-teal)]/10 rounded-md self-start">{project.category}</span>
+                  <span className="liquid-glass text-xs font-code text-[var(--accent-teal)] mb-2 px-2 py-1 bg-[var(--accent-teal)]/20 rounded-md border border-[var(--accent-teal)]/40 self-start">{project.category}</span>
                   <h3 className="text-xl font-bold font-heading mb-2 group-hover:text-[var(--accent-teal)] transition-colors">{project.title}</h3>
                   <p className="text-[var(--text-secondary)] text-sm mb-6 flex-grow">{project.shortDescription}</p>
 
