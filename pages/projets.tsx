@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -6,7 +6,7 @@ import { GetStaticProps } from 'next';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowUpRight, BrainCircuit, Code, Database, Cpu,
-  Sparkles, LayoutGrid,
+  Sparkles, LayoutGrid, ChevronDown,
 } from 'lucide-react';
 import { supabase, rowToProject } from '@/lib/supabase';
 import type { Project } from '@/data/projects';
@@ -43,9 +43,17 @@ const CATEGORY_THEME: Record<string, {
 
 const themeFor = (cat: string) => CATEGORY_THEME[cat] ?? CATEGORY_THEME['Web/Mobile'];
 
+const PAGE_SIZE = 5;
+
 export default function Portfolio({ projects }: Props) {
   const t = useT();
   const [activeCategory, setActiveCategory] = useState<string>(t.projects.filter_all);
+  const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
+
+  // Reset pagination when the active filter changes
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [activeCategory]);
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { [t.projects.filter_all]: projects.length };
@@ -59,6 +67,10 @@ export default function Portfolio({ projects }: Props) {
   const filteredProjects = activeCategory === t.projects.filter_all
     ? projects
     : projects.filter(p => p.category === activeCategory);
+
+  const visibleProjects = filteredProjects.slice(0, visibleCount);
+  const remaining = Math.max(0, filteredProjects.length - visibleProjects.length);
+  const hasMore = remaining > 0;
 
   const categoriesPresent = useMemo(
     () => new Set(projects.map(p => p.category)).size,
@@ -145,7 +157,7 @@ export default function Portfolio({ projects }: Props) {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 auto-rows-[280px] gap-5"
         >
           <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, idx) => {
+            {visibleProjects.map((project, idx) => {
               const isFeatured = idx === 0 && filteredProjects.length > 1;
               return (
                 <ProjectCard
@@ -160,6 +172,22 @@ export default function Portfolio({ projects }: Props) {
             })}
           </AnimatePresence>
         </motion.div>
+
+        {hasMore && (
+          <div className="flex justify-center mt-10">
+            <button
+              type="button"
+              onClick={() => setVisibleCount(c => c + PAGE_SIZE)}
+              className="group inline-flex items-center gap-2.5 px-6 py-3 rounded-full glass-dark border border-[var(--border)] text-sm font-medium text-[var(--text-primary)] hover:border-[var(--accent-teal)]/50 hover:text-[var(--accent-teal)] transition-all"
+            >
+              <span>{t.projects.load_more}</span>
+              <span className="text-[10px] font-code px-2 py-0.5 rounded-md bg-[var(--bg-deep)]/60 border border-[var(--border)] text-[var(--text-muted)]">
+                +{Math.min(PAGE_SIZE, remaining)}
+              </span>
+              <ChevronDown size={16} className="group-hover:translate-y-0.5 transition-transform" />
+            </button>
+          </div>
+        )}
 
         {filteredProjects.length === 0 && (
           <motion.div

@@ -150,6 +150,7 @@ const en: Translations = {
     featured_badge: 'Recent',
     stat_projects: 'Projects',
     stat_domains: 'Domains',
+    load_more: 'Load more',
   },
   project_detail: {
     back: 'Back to projects',

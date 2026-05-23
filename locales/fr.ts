@@ -148,6 +148,7 @@ const fr = {
     featured_badge: 'Récent',
     stat_projects: 'Projets',
     stat_domains: 'Domaines',
+    load_more: 'Charger plus',
   },
   project_detail: {
     back: 'Retour aux projets',
